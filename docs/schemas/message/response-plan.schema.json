@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "MAS Email. Structural schema; validate permissions, sources and workflow in Java.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "messageId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "correlationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "messageType": {
+          "const": "RESPONSE_PLAN"
+        },
+        "schemaVersion": {
+          "const": "1.0"
+        },
+        "producerAgentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "messageId",
+        "correlationId",
+        "messageType",
+        "schemaVersion",
+        "producerAgentId",
+        "createdAt"
+      ]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "responseIntent": {
+          "type": "string",
+          "enum": [
+            "ANSWER_INFORMATION_REQUEST",
+            "PROVIDE_DOCUMENT",
+            "ACKNOWLEDGE_REQUEST",
+            "REQUEST_CLARIFICATION"
+          ]
+        },
+        "requiresClarification": {
+          "type": "boolean"
+        },
+        "missingInformation": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "factsToCommunicate": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "sourceRef": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "sourceRef",
+              "text"
+            ]
+          }
+        },
+        "planId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "emailId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "replyStructure": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tone": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "responseIntent",
+        "requiresClarification",
+        "missingInformation",
+        "factsToCommunicate",
+        "planId",
+        "agentId",
+        "emailId",
+        "replyStructure",
+        "language",
+        "tone"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "requiresClarification": {
+                "const": true
+              }
+            },
+            "required": [
+              "requiresClarification"
+            ]
+          },
+          "then": {
+            "properties": {
+              "responseIntent": {
+                "const": "REQUEST_CLARIFICATION"
+              },
+              "missingInformation": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "responseIntent": {
+                "type": "string",
+                "enum": [
+                  "ANSWER_INFORMATION_REQUEST",
+                  "PROVIDE_DOCUMENT",
+                  "ACKNOWLEDGE_REQUEST"
+                ]
+              },
+              "missingInformation": {
+                "type": "array",
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "metadata",
+    "payload"
+  ]
+}

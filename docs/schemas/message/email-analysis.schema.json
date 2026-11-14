@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "MAS Email. Structural schema; validate permissions, sources and workflow in Java.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "messageId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "correlationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "messageType": {
+          "const": "EMAIL_ANALYSIS"
+        },
+        "schemaVersion": {
+          "const": "3.0"
+        },
+        "producerAgentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "messageId",
+        "correlationId",
+        "messageType",
+        "schemaVersion",
+        "producerAgentId",
+        "createdAt"
+      ]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "emailId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "threadId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "pattern": "^[a-z]{2}$"
+        },
+        "intent": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*$"
+          }
+        },
+        "entities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type",
+              "value"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Z0-9_]*$"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "requestedInformation": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          }
+        },
+        "senderClaims": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "uncertainties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "field",
+              "text"
+            ],
+            "properties": {
+              "field": {
+                "type": "string",
+                "enum": [
+                  "language",
+                  "requestedInformation",
+                  "requestedActions",
+                  "senderClaims",
+                  "uncertainties",
+                  "entities",
+                  "topics",
+                  "intent"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "requestedActions": {
+          "type": "array",
+          "description": "Actions explicitement demandées au destinataire",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "description",
+              "deadline"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Z0-9_]*$"
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1
+              },
+              "deadline": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "emailId",
+        "threadId",
+        "language",
+        "intent",
+        "topics",
+        "entities",
+        "requestedInformation",
+        "requestedActions",
+        "senderClaims",
+        "uncertainties",
+        "evidence"
+      ]
+    }
+  },
+  "required": [
+    "metadata",
+    "payload"
+  ]
+}

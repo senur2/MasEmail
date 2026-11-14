@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "MAS Email. Structural schema; validate permissions, sources and workflow in Java.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "const": "RESUME_WITH_INFORMATION"
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "correlationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "attemptId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "correlationId",
+        "taskId",
+        "attemptId"
+      ]
+    },
+    "answer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "storageResult": {
+      "type": "string",
+      "enum": [
+        "NOT_STORED",
+        "STORED_K_PERSO",
+        "STORED_K_COMMUN"
+      ]
+    }
+  },
+  "required": [
+    "action",
+    "task",
+    "answer",
+    "storageResult"
+  ]
+}

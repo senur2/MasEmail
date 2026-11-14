@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "MAS Email. Structural schema; validate permissions, sources and workflow in Java.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "requestMessageId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "action": {
+      "const": "ANSWER_INFORMATION"
+    },
+    "answer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "memoryChoice": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "K_PERSO",
+        "K_COMMUN"
+      ]
+    },
+    "storageConfirmed": {
+      "type": "boolean"
+    },
+    "memoryAgentId": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "requestMessageId",
+    "action",
+    "answer",
+    "memoryChoice",
+    "memoryAgentId",
+    "storageConfirmed"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "memoryChoice": {
+            "const": "K_PERSO"
+          }
+        },
+        "required": [
+          "memoryChoice"
+        ]
+      },
+      "then": {
+        "properties": {
+          "memoryAgentId": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "memoryAgentId": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "memoryChoice": { "const": "NONE" }
+        }
+      },
+      "then": {
+        "properties": {
+          "storageConfirmed": { "const": false }
+        }
+      }
+    }
+  ]
+}

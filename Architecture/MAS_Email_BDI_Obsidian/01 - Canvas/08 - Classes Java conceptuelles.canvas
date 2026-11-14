@@ -1,0 +1,30 @@
+{
+	"nodes":[
+		{"id":"4e68947457784125","type":"text","x":0,"y":-260,"width":1100,"height":160,"text":"# 08 · Architecture de classes Java (pré-UML)\nSchéma conceptuel : les choix exacts de signatures, héritage, composition et patterns sont **à préciser**.","color":"5"},
+		{"id":"58ca9b852ac84331","type":"text","x":0,"y":170,"width":360,"height":230,"text":"## «interface» Agent\n`getId()`\n`handle(AgentMessage): AgentResult`\n\nContrat commun possible","color":"5"},
+		{"id":"3c406be2cdb64318","type":"file","x":480,"y":-20,"width":315,"height":170,"file":"02 - Agents/ParserAgent.md","color":"5"},
+		{"id":"117ff076d4cf4e3e","type":"file","x":480,"y":195,"width":315,"height":170,"file":"02 - Agents/OrchestratorAgent.md","color":"5"},
+		{"id":"e0354187d32545fc","type":"file","x":480,"y":410,"width":315,"height":170,"file":"02 - Agents/WriterAgent.md","color":"4"},
+		{"id":"f92b6fcf4ad54915","type":"file","x":480,"y":625,"width":315,"height":170,"file":"02 - Agents/ScribeAgent.md","color":"6"},
+		{"id":"3819efe585564812","type":"file","x":480,"y":840,"width":315,"height":170,"file":"02 - Agents/CorrectingAgent.md","color":"6"},
+		{"id":"1107311313d34e26","type":"text","x":1010,"y":80,"width":365,"height":210,"text":"## AgentRegistry\n`register(agent)`\n`findByCapability()`\n\n**Factory / Repository ?**","color":"5"},
+		{"id":"e36603e26b514d07","type":"text","x":1010,"y":390,"width":365,"height":210,"text":"## «interface» RoutingStrategy\n`select(EmailAnalysis)`\n\n**Strategy Pattern**","color":"5"},
+		{"id":"9915a138d56b4e1e","type":"file","x":1510,"y":100,"width":350,"height":190,"file":"03 - Monde et connaissances/KnowledgeService.md","color":"5"},
+		{"id":"e659c1998b3b4fee","type":"text","x":1510,"y":400,"width":350,"height":210,"text":"## «interface» LLMService\n`generate(LLMRequest)`\nRemplacement modèle/moteur\n\n**Adapter** possible","color":"5"},
+		{"id":"18fd7e4a0d8e47d4","type":"file","x":1510,"y":730,"width":350,"height":175,"file":"03 - Monde et connaissances/ConversationMemory.md","color":"5"},
+		{"id":"1e8c01b41a754100","type":"text","x":1960,"y":390,"width":360,"height":230,"text":"## Travail restant\n- Structures Belief/Goal/Plan.\n- Événements et transitions.\n- Contrats / erreurs et versioning.\n- Patterns réellement utiles, sans surconception.","color":"2"}
+	],
+	"edges":[
+		{"id":"141f448948b94d76","fromNode":"58ca9b852ac84331","toNode":"3c406be2cdb64318","label":"implémente ?","fromSide":"right","toSide":"left"},
+		{"id":"bfb6f2d9a4c64214","fromNode":"58ca9b852ac84331","toNode":"117ff076d4cf4e3e","label":"implémente ?","fromSide":"right","toSide":"left"},
+		{"id":"3125c915e0554923","fromNode":"58ca9b852ac84331","toNode":"e0354187d32545fc","label":"implémente ?","fromSide":"right","toSide":"left"},
+		{"id":"7ecb8883982f4168","fromNode":"58ca9b852ac84331","toNode":"f92b6fcf4ad54915","label":"implémente ?","fromSide":"right","toSide":"left"},
+		{"id":"7db03e05059848e1","fromNode":"58ca9b852ac84331","toNode":"3819efe585564812","label":"implémente ?","fromSide":"right","toSide":"left"},
+		{"id":"0d997416c23f4e47","fromNode":"117ff076d4cf4e3e","toNode":"1107311313d34e26","label":"consulte","fromSide":"right","toSide":"left"},
+		{"id":"9f8387f705a74e2f","fromNode":"117ff076d4cf4e3e","toNode":"e36603e26b514d07","label":"utilise","fromSide":"right","toSide":"left"},
+		{"id":"9107a20d0d4e4a2b","fromNode":"e0354187d32545fc","toNode":"9915a138d56b4e1e","label":"récupère","fromSide":"right","toSide":"left"},
+		{"id":"c4b3fb466dda4f61","fromNode":"e0354187d32545fc","toNode":"e659c1998b3b4fee","label":"inférence","fromSide":"right","toSide":"left"},
+		{"id":"93b32cb506ef441b","fromNode":"f92b6fcf4ad54915","toNode":"e659c1998b3b4fee","label":"inférence","fromSide":"right","toSide":"left"},
+		{"id":"e82c467b6d874753","fromNode":"117ff076d4cf4e3e","toNode":"18fd7e4a0d8e47d4","label":"persiste","fromSide":"right","toSide":"left"}
+	]
+}

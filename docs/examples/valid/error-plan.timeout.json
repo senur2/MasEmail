@@ -1,0 +1,29 @@
+{
+  "metadata": {
+    "messageId": "550e8400-e29b-41d4-a716-446655440001",
+    "correlationId": "660e8400-e29b-41d4-a716-446655440001",
+    "messageType": "ERROR_PLAN",
+    "schemaVersion": "1.0",
+    "producerAgentId": "OrchestratorAgent",
+    "createdAt": "2026-11-13T09:00:00Z"
+  },
+  "payload": {
+    "errorId": "770e8400-e29b-41d4-a716-446655440001",
+    "task": {
+      "correlationId": "660e8400-e29b-41d4-a716-446655440001",
+      "taskId": "880e8400-e29b-41d4-a716-446655440001",
+      "attemptId": "990e8400-e29b-41d4-a716-446655440001"
+    },
+    "agentId": "ScribeAgent",
+    "component": "OllamaLlmGateway",
+    "stage": "SCRIBE",
+    "reportedBy": "EXECUTION_CONTROL",
+    "code": "LLM_TIMEOUT",
+    "expectedResult": "DraftContent avec subject et body",
+    "observedProblem": "Délai de réponse du LLM dépassé.",
+    "traceRef": null,
+    "status": "STOPPED",
+    "requiresUserDecision": true,
+    "occurredAt": "2026-11-13T09:00:01Z"
+  }
+}

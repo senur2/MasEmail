@@ -1,0 +1,18 @@
+{
+  "metadata": {
+    "messageId": "550e8400-e29b-41d4-a716-446655440001",
+    "correlationId": "660e8400-e29b-41d4-a716-446655440001",
+    "messageType": "CORRECTION_PLAN",
+    "schemaVersion": "2.0",
+    "producerAgentId": "CorrectingAgent",
+    "createdAt": "2026-11-13T09:00:00Z"
+  },
+  "payload": {
+    "targetAgent": "SCRIBE_AGENT",
+    "correctionType": "ADJUST_STYLE",
+    "requiresUserValidation": false,
+    "instruction": "Rendre la réponse plus concise.",
+    "memoryProposals": [],
+    "reason": "Correction de style."
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "action": "RESUME_WITH_INFORMATION",
+  "task": {
+    "correlationId": "660e8400-e29b-41d4-a716-446655440001",
+    "taskId": "880e8400-e29b-41d4-a716-446655440001",
+    "attemptId": "990e8400-e29b-41d4-a716-446655440001"
+  },
+  "answer": "DOS-42",
+  "storageResult": "STORED_K_PERSO"
+}

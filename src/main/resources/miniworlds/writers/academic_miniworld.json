@@ -1,0 +1,31 @@
+{
+  "worldId": "AcademicWriter",
+  "domain": "Enseignement, évaluation et consultation des copies.",
+  "scope": {
+    "entityType": "COURSE",
+    "entityValues": ["INF312", "Intelligence artificielle"]
+  },
+  "state": {
+    "courses": [
+      {
+        "code": "INF312",
+        "name": "Intelligence artificielle",
+        "gradingStatus": "Correction terminée",
+        "gradesPublished": false,
+        "solutionsPublished": false,
+        "paperReview": "Sur rendez-vous après publication des notes"
+      }
+    ]
+  },
+  "informationLookup": {
+    "date_publication_notes": "2026-11-18",
+    "date_publication_corriges": "2026-11-20",
+    "possibilite_consultation_copies": "Oui, sur rendez-vous après publication des notes"
+  },
+  "policies": [
+    "Ces dates concernent uniquement le cours INF312.",
+    "Ne jamais communiquer de note individuelle par e-mail.",
+    "Vouvoyer les étudiants."
+  ],
+  "unknownPolicy": "Indiquer que l'information reste à confirmer. Si elle est indispensable, demander à l'utilisateur de la vérifier."
+}

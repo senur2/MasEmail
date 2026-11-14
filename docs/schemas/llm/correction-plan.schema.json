@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "targetAgent": {
+      "type": "string",
+      "enum": [
+        "ORCHESTRATOR",
+        "PARSER_AGENT",
+        "DECISION_AGENT",
+        "WRITER_AGENT",
+        "SCRIBE_AGENT"
+      ]
+    },
+    "correctionType": {
+      "type": "string",
+      "enum": [
+        "UPDATE_KNOWLEDGE",
+        "REPARSE_EMAIL",
+        "REROUTE_DOMAIN",
+        "REVISE_PLAN",
+        "ADJUST_STYLE"
+      ]
+    },
+    "requiresUserValidation": {
+      "type": "boolean"
+    },
+    "instruction": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "memoryProposals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "suggestedScope": {
+            "type": "string",
+            "enum": [
+              "COMMON",
+              "AGENT_SPECIFIC"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        },
+        "required": [
+          "suggestedScope",
+          "key",
+          "value"
+        ]
+      }
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    }
+  },
+  "required": [
+    "targetAgent",
+    "correctionType",
+    "requiresUserValidation",
+    "instruction",
+    "memoryProposals",
+    "reason"
+  ]
+}

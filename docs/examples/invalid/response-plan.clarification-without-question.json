@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "messageId": "550e8400-e29b-41d4-a716-446655440001",
+    "correlationId": "660e8400-e29b-41d4-a716-446655440001",
+    "messageType": "RESPONSE_PLAN",
+    "schemaVersion": "1.0",
+    "producerAgentId": "ResearchWriter",
+    "createdAt": "2026-11-13T09:00:00Z"
+  },
+  "payload": {
+    "planId": "plan-001",
+    "agentId": "ResearchWriter",
+    "emailId": "email-001",
+    "responseIntent": "ANSWER_INFORMATION_REQUEST",
+    "factsToCommunicate": [
+      {
+        "text": "La réunion est prévue le 12 novembre.",
+        "sourceRef": "project-orion-calendar"
+      }
+    ],
+    "missingInformation": [],
+    "requiresClarification": true,
+    "replyStructure": [
+      "salutation",
+      "answer",
+      "closing"
+    ],
+    "language": "fr",
+    "tone": "professional"
+  }
+}

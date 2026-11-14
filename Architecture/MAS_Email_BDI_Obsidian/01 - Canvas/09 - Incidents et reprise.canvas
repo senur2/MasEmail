@@ -1,0 +1,30 @@
+{
+	"nodes":[
+		{"id":"fe75673f48c2e079","type":"text","text":"# 09 · Agent qui n’accomplit pas sa tâche\nArrêt traçable, errorJSON vers Orchestrator puis utilisateur.\nReprise soumise à décision explicite ; aucune boucle automatique imposée.","x":0,"y":-340,"width":1180,"height":180,"color":"2"},
+		{"id":"99b4d0de292ca63e","type":"text","text":"## Défaut de fond\nSignalement étayé par un agent ou l’utilisateur.\nOrchestrator ne possède pas de juge LLM ; diagnostic sur demande.","x":530,"y":420,"width":400,"height":250,"color":"6"},
+		{"id":"021d8e27ad023d1c","type":"text","text":"## Orchestrator · Arrêt\nBloquer les étapes dépendantes.\nTracer le constat.\nInformer l’utilisateur.","x":1650,"y":0,"width":400,"height":240,"color":"2"},
+		{"id":"13aabefdc255887e","type":"text","text":"## Décision utilisateur\nPréciser / autoriser une reprise / demander correction ou routage / abandonner.\nAucune permission de mémoire ou d’envoi implicite.","x":2210,"y":0,"width":420,"height":290,"color":"6"},
+		{"id":"0bc06be247d43115","type":"text","text":"## Nouveau contrôle\nRésultat exploitable ?\nSinon nouvel incident et escalade.\nPas de résultat tardif accepté comme courant.","x":1650,"y":480,"width":400,"height":250,"color":"4"},
+		{"id":"cecb1dd5f658154a","type":"text","text":"## Clarification normale\nQuestion utile ou document manquant : attente utilisateur.\nCe n’est pas automatiquement un plantage.","x":0,"y":480,"width":380,"height":250,"color":"4"},
+		{"id":"c5218f089c29a770","type":"text","text":"## Si l’agent est muet\nLe contrôle d’exécution construit le signalement.\nNe pas exiger un JSON correct d’un agent qui vient d’échouer.","x":530,"y":910,"width":960,"height":230,"color":"2"},
+		{"id":"48f6b1c0bfef87e4","type":"text","text":"## À décider\nÉchéances, limites de tentatives, portée du crash, durée des traces, indisponibilité de l’Orchestrator.\nPas de valeur numérique ni de mécanisme autonome ajoutés.","x":1650,"y":910,"width":980,"height":230,"color":"2"},
+		{"id":"6567fd10ec9abb41","type":"file","file":"05 - Conception/Suivi des taches et reprise.md","x":0,"y":910,"width":380,"height":230,"color":"2"},
+		{"id":"cd468a57705e84eb","type":"text","text":"## Mission attribuée\nAgent, entrées/version, résultat attendu.\nUne seule exécution active.","x":-340,"y":20,"width":380,"height":220,"color":"4"},
+		{"id":"504cb42d03ffbcae","type":"text","text":"## Suivi et contrôle\nÉchec signalé ; sortie invalide ou vide ; absence de résultat ; mauvaise tâche/version.","x":380,"y":0,"width":400,"height":240,"color":"4"},
+		{"id":"bb1e93525d667306","type":"text","text":"## Brouillon courant\nPrésenter et faire approuver la version avant envoi.\nUne ancienne approbation ne couvre pas une révision.","x":1010,"y":490,"width":400,"height":250,"color":"6"},
+		{"id":"bad16fc0281317c8","type":"file","file":"04 - Contrats JSON/errorJSON.md","x":980,"y":-115,"width":400,"height":260,"color":"2"},
+		{"id":"c1f3eb347130bf29","type":"text","text":"## Reprise autorisée\nNouvelle tentative à l’étape utile.\nConserver seulement les résultats encore valides.\nRéexaminer les effets déjà accomplis.","x":2400,"y":490,"width":420,"height":270,"color":"4"}
+	],
+	"edges":[
+		{"id":"2a07b14f97e950d6","fromNode":"cd468a57705e84eb","fromSide":"right","toNode":"504cb42d03ffbcae","toSide":"left","label":"attente de résultat"},
+		{"id":"08aa5fe569f35406","fromNode":"504cb42d03ffbcae","fromSide":"right","toNode":"bad16fc0281317c8","toSide":"left","label":"anomalie constatée"},
+		{"id":"da2b13c016966325","fromNode":"99b4d0de292ca63e","fromSide":"right","toNode":"bad16fc0281317c8","toSide":"left","label":"constat sourcé"},
+		{"id":"d36326b12d869a0e","fromNode":"bad16fc0281317c8","fromSide":"right","toNode":"021d8e27ad023d1c","toSide":"left","label":"reçu ou construit"},
+		{"id":"57aa702c83a80f7c","fromNode":"021d8e27ad023d1c","fromSide":"right","toNode":"13aabefdc255887e","toSide":"left","label":"escalade"},
+		{"id":"ddcb00c3fc83b810","fromNode":"13aabefdc255887e","fromSide":"bottom","toNode":"c1f3eb347130bf29","toSide":"top","label":"si autorisation"},
+		{"id":"2fb057656bbb820b","fromNode":"c1f3eb347130bf29","fromSide":"left","toNode":"0bc06be247d43115","toSide":"right","label":"nouveau résultat"},
+		{"id":"89ac699c1ac54938","fromNode":"0bc06be247d43115","fromSide":"left","toNode":"bb1e93525d667306","toSide":"right","label":"si recevable"},
+		{"id":"4aef04ea7cace11d","fromNode":"0bc06be247d43115","fromSide":"top","toNode":"021d8e27ad023d1c","toSide":"bottom","label":"si nouvel échec"},
+		{"id":"3ac921e3f7800128","fromNode":"504cb42d03ffbcae","fromSide":"left","toNode":"cecb1dd5f658154a","toSide":"right","label":"question exploitable"}
+	]
+}

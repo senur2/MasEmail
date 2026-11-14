@@ -1,0 +1,28 @@
+{
+	"nodes":[
+		{"id":"b54b71dace9cbe67","type":"text","text":"# 01 · Monde, beliefs et connaissances\nNoyau commun de référence ; vues des Writers pouvant différer.\nPas de parallélisme introduit.","x":0,"y":-320,"width":1060,"height":180,"color":"4"},
+		{"id":"ee15ca51e57a4e40","type":"file","file":"02 - Agents/StudentWriter.md","x":0,"y":780,"width":380,"height":220,"color":"5"},
+		{"id":"becb53b0bed342f5","type":"file","file":"02 - Agents/TeacherWriter.md","x":540,"y":780,"width":380,"height":220,"color":"5"},
+		{"id":"6765ca03fbf3429e","type":"file","file":"02 - Agents/AdministrationWriter.md","x":1080,"y":780,"width":380,"height":220,"color":"5"},
+		{"id":"578b66129fc64d8e","type":"file","file":"02 - Agents/ResearchWriter.md","x":0,"y":1110,"width":380,"height":220,"color":"5"},
+		{"id":"70db2184afd6f2a9","type":"file","file":"02 - Agents/GenericWriter.md","x":540,"y":1110,"width":380,"height":220,"color":"5"},
+		{"id":"32a98cf2aa0f5e06","type":"file","file":"02 - Agents/PersonalWriter.md","x":1080,"y":1110,"width":380,"height":220,"color":"5"},
+		{"id":"c7284633bbfe402b","type":"file","file":"03 - Monde et connaissances/ConversationMemory.md","x":1620,"y":780,"width":440,"height":220,"color":"4"},
+		{"id":"b052aa937dfe4376","type":"file","file":"05 - Conception/Matrice des actions sur le monde.md","x":1620,"y":1110,"width":440,"height":220,"color":"4"},
+		{"id":"1aa9e47a813840ae","type":"file","file":"03 - Monde et connaissances/KnowledgeService.md","x":-260,"y":-40,"width":380,"height":220,"color":"4"},
+		{"id":"5758d778ab28b502","type":"file","file":"02 - Agents/WriterAgent.md","x":-190,"y":460,"width":380,"height":220,"color":"5"},
+		{"id":"cf0d03b74ea6cea2","type":"text","text":"## Belief minimal\nclaim + confidence.\nProvenance et validation dans les traces ; aucun champ additionnel imposé au belief.","x":340,"y":460,"width":380,"height":220,"color":"4"},
+		{"id":"be1fad8a58164c2e","type":"file","file":"03 - Monde et connaissances/SharedWorldState.md","x":380,"y":-40,"width":380,"height":220,"color":"4"},
+		{"id":"718422dcbb59db90","type":"file","file":"02 - Agents/OrchestratorAgent.md","x":1080,"y":-80,"width":380,"height":220,"color":"4"},
+		{"id":"50ed4657f021bd80","type":"text","text":"## Écritures contrôlées\nOrchestrator seul. Promotion en fait commun après validation utilisateur.\nRévision / révocation à sa demande.\nLe workflow n’est pas un fait métier.","x":1460,"y":380,"width":380,"height":260,"color":"4"},
+		{"id":"b6e0446059fa19b8","type":"text","text":"## K_base : point ouvert\nHypothèses non confirmées dans K_base ; Writer non autorisé à créer de belief provisoire.\nClarifier la frontière et les droits, sans fusionner K_base et K_perso.","x":1620,"y":-140,"width":440,"height":280,"color":"2"}
+	],
+	"edges":[
+		{"id":"edb55b8d95bedf91","fromNode":"1aa9e47a813840ae","fromSide":"bottom","toNode":"5758d778ab28b502","toSide":"top","label":"sources filtrées"},
+		{"id":"7a4b8d3aaa07c606","fromNode":"be1fad8a58164c2e","fromSide":"left","toNode":"5758d778ab28b502","toSide":"right","label":"lecture autorisée"},
+		{"id":"75d73e8fe48a2c26","fromNode":"718422dcbb59db90","fromSide":"left","toNode":"be1fad8a58164c2e","toSide":"right","label":"mise à jour contrôlée"},
+		{"id":"a8c4e3780c9c18d9","fromNode":"be1fad8a58164c2e","fromSide":"bottom","toNode":"cf0d03b74ea6cea2","toSide":"top","label":"contenu minimal"},
+		{"id":"258557f6974772c5","fromNode":"718422dcbb59db90","fromSide":"bottom","toNode":"50ed4657f021bd80","toSide":"top","label":"autorité"},
+		{"id":"bbf6e603680759c5","fromNode":"c7284633bbfe402b","fromSide":"left","toNode":"be1fad8a58164c2e","toSide":"right","label":"contexte via Orchestrator"}
+	]
+}

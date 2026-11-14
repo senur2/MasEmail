@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "MAS Email. Structural schema; validate permissions, sources and workflow in Java.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "errorId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "correlationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "taskId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "attemptId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "correlationId",
+        "taskId",
+        "attemptId"
+      ]
+    },
+    "agentId": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "component": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "PARSER",
+        "DECISION",
+        "WRITER",
+        "SCRIBE",
+        "CORRECTING",
+        "ORCHESTRATION",
+        "KNOWLEDGE"
+      ]
+    },
+    "reportedBy": {
+      "type": "string",
+      "enum": [
+        "AGENT",
+        "EXECUTION_CONTROL"
+      ]
+    },
+    "code": {
+      "type": "string",
+      "enum": [
+        "LLM_TIMEOUT",
+        "LLM_UNAVAILABLE",
+        "INVALID_JSON",
+        "INVALID_OUTPUT",
+        "EMPTY_RESULT",
+        "NO_RESULT",
+        "AGENT_FAILURE",
+        "TASK_NOT_COMPLETED",
+        "MAX_CORRECTIONS_REACHED",
+        "PERMISSION_DENIED",
+        "FILE_ACCESS_ERROR",
+        "INTERNAL_ERROR",
+        "NOT_IMPLEMENTED"
+      ]
+    },
+    "expectedResult": {
+      "type": "string",
+      "minLength": 1
+    },
+    "observedProblem": {
+      "type": "string",
+      "minLength": 1
+    },
+    "traceRef": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "status": {
+      "const": "STOPPED"
+    },
+    "requiresUserDecision": {
+      "const": true
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "errorId",
+    "task",
+    "agentId",
+    "component",
+    "stage",
+    "reportedBy",
+    "code",
+    "expectedResult",
+    "observedProblem",
+    "traceRef",
+    "status",
+    "requiresUserDecision",
+    "occurredAt"
+  ]
+}

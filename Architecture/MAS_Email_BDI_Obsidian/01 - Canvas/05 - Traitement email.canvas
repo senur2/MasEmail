@@ -1,0 +1,34 @@
+{
+	"nodes":[
+		{"id":"fbaf265962787cec","type":"text","x":0,"y":-330,"width":1160,"height":180,"text":"# 05 · Séquence fonctionnelle\nExécution séquentielle ; tous les échanges passent par Orchestrator.\nLes cartes répétées représentent le même coordinateur, pas plusieurs agents.","color":"4"},
+		{"id":"32947fdc1e88c538","type":"text","x":0,"y":0,"width":380,"height":230,"text":"## 1 · Orchestrator\nReçoit email et fil.\nEnregistre la tâche Parser.","color":"4"},
+		{"id":"1b4038a968dae06c","type":"text","x":510,"y":0,"width":380,"height":230,"text":"## 2 · ParserAgent\nExtraction simple.\nRetourne EmailAnalysis.","color":"4"},
+		{"id":"c3b1f9a8f1f42f53","type":"text","x":1020,"y":0,"width":380,"height":230,"text":"## 3 · Orchestrator\nContrôle l’analyse.\nDemande le routage.","color":"4"},
+		{"id":"5a1bf65aaf612d6f","type":"text","x":1530,"y":0,"width":380,"height":230,"text":"## 4 · DecisionAgent\nChoisit selon les règles V1.\nRetourne RouteDecision.","color":"4"},
+		{"id":"5b85d7b815aea87c","type":"text","x":2040,"y":0,"width":380,"height":230,"text":"## 5 · Orchestrator\nContrôle la décision.\nAttribue la tâche au Writer.","color":"4"},
+		{"id":"ab260376c3c71c40","type":"text","x":2040,"y":410,"width":380,"height":230,"text":"## 6 · Writer\nConnaissances et raisonnement BDI.\nRetourne ResponsePlan.","color":"5"},
+		{"id":"f15198a8e330a63b","type":"text","x":1530,"y":410,"width":380,"height":230,"text":"## 7 · Orchestrator\nContrôle le plan.\nClarifie si nécessaire, puis transmet.","color":"4"},
+		{"id":"94248082aa0f7905","type":"text","x":1020,"y":410,"width":380,"height":230,"text":"## 8 · ScribeAgent\nFormulation simple.\nRetourne DraftResponse.","color":"6"},
+		{"id":"0b46cd8463f65190","type":"text","x":510,"y":410,"width":380,"height":230,"text":"## 9 · Orchestrator\nContrôle le résultat.\nPrésente la version courante.","color":"4"},
+		{"id":"f0ad05d41d0133df","type":"text","x":0,"y":410,"width":380,"height":230,"text":"## 10 · Utilisateur\nCorrige, rejette ou approuve.\nEnvoi seulement après accord.","color":"6"},
+		{"id":"d889076b1f90477f","type":"file","x":0,"y":880,"width":380,"height":220,"file":"03 - Monde et connaissances/ConversationMemory.md","color":"4"},
+		{"id":"713900b2cb0a49a6","type":"file","x":510,"y":880,"width":380,"height":220,"file":"02 - Agents/CorrectingAgent.md","color":"6"},
+		{"id":"d3feb5ce4ef178ce","type":"file","x":1020,"y":880,"width":380,"height":220,"file":"05 - Conception/Suivi des taches et reprise.md","color":"2"},
+		{"id":"618aab710ee4daf7","type":"text","x":1530,"y":880,"width":380,"height":220,"text":"## Service LLM local\nParser, Writers, Scribe, Correcting.\nPas de LLM dans Orchestrator ; Decision V1 à règles.","color":"4"},
+		{"id":"52b8f290dbe878b8","type":"text","x":2040,"y":880,"width":380,"height":260,"text":"## Toute étape peut attendre ou échouer\nQuestion utile : attente utilisateur.\nÉchec, sortie invalide, absence : arrêt et signalement.\nReprise après validation.","color":"2"}
+	],
+	"edges":[
+		{"id":"acf1fe98483c1644","fromNode":"32947fdc1e88c538","fromSide":"right","toNode":"1b4038a968dae06c","toSide":"left","label":"résultat / mission via Orchestrator"},
+		{"id":"69a0b73d6397ea11","fromNode":"1b4038a968dae06c","fromSide":"right","toNode":"c3b1f9a8f1f42f53","toSide":"left","label":"résultat / mission via Orchestrator"},
+		{"id":"23e28f036122f489","fromNode":"c3b1f9a8f1f42f53","fromSide":"right","toNode":"5a1bf65aaf612d6f","toSide":"left","label":"résultat / mission via Orchestrator"},
+		{"id":"a4c3a0fb2c34b4bd","fromNode":"5a1bf65aaf612d6f","fromSide":"right","toNode":"5b85d7b815aea87c","toSide":"left","label":"résultat / mission via Orchestrator"},
+		{"id":"2c271c5fecb1cb0e","fromNode":"5b85d7b815aea87c","fromSide":"bottom","toNode":"ab260376c3c71c40","toSide":"top","label":"résultat / mission via Orchestrator"},
+		{"id":"533f5e988fb67714","fromNode":"ab260376c3c71c40","fromSide":"left","toNode":"f15198a8e330a63b","toSide":"right","label":"résultat / mission via Orchestrator"},
+		{"id":"97c270cdae422d0f","fromNode":"f15198a8e330a63b","fromSide":"left","toNode":"94248082aa0f7905","toSide":"right","label":"résultat / mission via Orchestrator"},
+		{"id":"d50852bbb039f3c8","fromNode":"94248082aa0f7905","fromSide":"left","toNode":"0b46cd8463f65190","toSide":"right","label":"résultat / mission via Orchestrator"},
+		{"id":"8f5f7e4d681bb413","fromNode":"0b46cd8463f65190","fromSide":"left","toNode":"f0ad05d41d0133df","toSide":"right","label":"résultat / mission via Orchestrator"},
+		{"id":"6692ebc5fea354a2","fromNode":"f0ad05d41d0133df","fromSide":"right","toNode":"713900b2cb0a49a6","toSide":"left","label":"feedback via Orchestrator"},
+		{"id":"c70dc6f018daa0c9","fromNode":"0b46cd8463f65190","fromSide":"left","toNode":"d889076b1f90477f","toSide":"right","label":"versions / traces via Orchestrator"},
+		{"id":"d419883b678197a1","fromNode":"52b8f290dbe878b8","fromSide":"left","toNode":"d3feb5ce4ef178ce","toSide":"right","label":"protocole commun"}
+	]
+}

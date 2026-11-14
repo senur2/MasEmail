@@ -1,0 +1,36 @@
+{
+	"nodes":[
+		{"id":"3b1fd5281cc33a5c","type":"text","text":"# 00 · Architecture générale\nDecision choisit ; Orchestrator administre et transmet.\nToutes les communications interagents et utilisateur passent par l’Orchestrator.","x":0,"y":-400,"width":1100,"height":180,"color":"4"},
+		{"id":"c163be19ac440cbc","type":"file","file":"02 - Agents/WriterAgent.md","x":650,"y":570,"width":380,"height":220,"color":"5"},
+		{"id":"d36595b673984b1d","type":"file","file":"02 - Agents/ScribeAgent.md","x":650,"y":900,"width":380,"height":220,"color":"6"},
+		{"id":"f60c66d7c2a14a9e","type":"file","file":"02 - Agents/CorrectingAgent.md","x":650,"y":1230,"width":380,"height":220,"color":"6"},
+		{"id":"c4ad05036b254408","type":"file","file":"02 - Agents/StudentWriter.md","x":1190,"y":210,"width":380,"height":220,"color":"5"},
+		{"id":"6c3a5f555b1240e7","type":"file","file":"02 - Agents/TeacherWriter.md","x":1660,"y":210,"width":380,"height":220,"color":"5"},
+		{"id":"146320a76e63469f","type":"file","file":"02 - Agents/AdministrationWriter.md","x":1190,"y":540,"width":380,"height":220,"color":"5"},
+		{"id":"cd9acc4e4af64e02","type":"file","file":"02 - Agents/ResearchWriter.md","x":1660,"y":540,"width":380,"height":220,"color":"5"},
+		{"id":"354dcaed57ea45b8","type":"file","file":"02 - Agents/GenericWriter.md","x":1190,"y":870,"width":380,"height":220,"color":"5"},
+		{"id":"da7d2120ca1a29ce","type":"file","file":"02 - Agents/PersonalWriter.md","x":1660,"y":870,"width":380,"height":220,"color":"5"},
+		{"id":"8717dc8a45048399","type":"text","text":"## Profils métier\nTeacherWriter conservé ; liste finale à confirmer.\nPersonalWriter : nom proposé du profil personnel accepté.","x":1190,"y":-90,"width":850,"height":210,"color":"2"},
+		{"id":"11138287e0a3163d","type":"text","text":"## LLM local commun\nParser, Writers, Scribe, Correcting.\nOrchestrator : règles fixes.\nDecision : règles V1, puis JEV-like à préciser.\nExécution séquentielle.","x":1190,"y":1230,"width":850,"height":240,"color":"4"},
+		{"id":"ba68447515e83088","type":"text","text":"## Utilisateur\nRépondre, choisir la mémoire, corriger, autoriser une reprise.\nApprouver la version courante avant envoi.","x":-1120,"y":240,"width":350,"height":240,"color":"6"},
+		{"id":"bd76704ca3a2dc38","type":"text","text":"## Email entrant\nMessage, objet, expéditeur, fil.","x":-705,"y":-90,"width":350,"height":150,"color":"4"},
+		{"id":"cc7099336bf64932","type":"file","file":"02 - Agents/OrchestratorAgent.md","x":-80,"y":120,"width":430,"height":290,"color":"4"},
+		{"id":"7935f51350b14b36","type":"file","file":"02 - Agents/ParserAgent.md","x":650,"y":-160,"width":380,"height":220,"color":"4"},
+		{"id":"a322ec91480d0b6c","type":"file","file":"02 - Agents/DecisionAgent.md","x":720,"y":210,"width":380,"height":220,"color":"4"},
+		{"id":"ed6a68c5326149d7","type":"file","file":"03 - Monde et connaissances/SharedWorldState.md","x":170,"y":1200,"width":380,"height":220,"color":"4"},
+		{"id":"9e66eb406dde36a4","type":"file","file":"05 - Conception/Suivi des taches et reprise.md","x":-1000,"y":850,"width":350,"height":240,"color":"2"},
+		{"id":"137fecb44cd14dd4","type":"file","file":"03 - Monde et connaissances/KnowledgeService.md","x":-650,"y":1200,"width":380,"height":220,"color":"4"}
+	],
+	"edges":[
+		{"id":"1378548f951d21a2","fromNode":"bd76704ca3a2dc38","fromSide":"right","toNode":"cc7099336bf64932","toSide":"left","label":"réception"},
+		{"id":"57fe5d5b521cdd4c","fromNode":"cc7099336bf64932","fromSide":"left","toNode":"ba68447515e83088","toSide":"right","fromEnd":"arrow","label":"questions, propositions, validations"},
+		{"id":"42c4f965ff77bec2","fromNode":"cc7099336bf64932","fromSide":"right","toNode":"7935f51350b14b36","toSide":"left","fromEnd":"arrow","label":"1 · EmailAnalysis"},
+		{"id":"55e1f2875b5e3d60","fromNode":"cc7099336bf64932","fromSide":"right","toNode":"a322ec91480d0b6c","toSide":"left","fromEnd":"arrow","label":"2 · RouteDecision"},
+		{"id":"aeb8fa8a6a9c9d88","fromNode":"cc7099336bf64932","fromSide":"right","toNode":"c163be19ac440cbc","toSide":"left","fromEnd":"arrow","label":"3 · ResponsePlan"},
+		{"id":"ca9f3cf39f05fe0e","fromNode":"cc7099336bf64932","fromSide":"right","toNode":"d36595b673984b1d","toSide":"left","fromEnd":"arrow","label":"4 · DraftResponse"},
+		{"id":"4dff197809d72f29","fromNode":"cc7099336bf64932","fromSide":"bottom","toNode":"f60c66d7c2a14a9e","toSide":"top","fromEnd":"arrow","label":"feedback · CorrectionPlan"},
+		{"id":"85a2d6b5ec0c968b","fromNode":"cc7099336bf64932","fromSide":"bottom","toNode":"137fecb44cd14dd4","toSide":"top","label":"écritures après choix utilisateur"},
+		{"id":"bf2ef3759d1f1e00","fromNode":"cc7099336bf64932","fromSide":"bottom","toNode":"ed6a68c5326149d7","toSide":"top","label":"état ; faits après validation"},
+		{"id":"7a54ef739c12c144","fromNode":"cc7099336bf64932","fromSide":"bottom","toNode":"9e66eb406dde36a4","toSide":"top","fromEnd":"arrow","label":"échec / sortie invalide / absence"}
+	]
+}

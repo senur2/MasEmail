@@ -1,0 +1,24 @@
+{
+  "worldId": "FinanceWriter",
+  "domain": "Justificatifs, dossiers comptables et remboursements.",
+  "state": {
+    "expenseReports": {
+      "2026-09": {
+        "status": "INCOMPLETE",
+        "receivedDocuments": ["Facture d'hôtel"],
+        "missingDocuments": ["Reçu du billet de train"],
+        "packetReady": false,
+        "packetSent": false
+      }
+    }
+  },
+  "informationLookup": {
+    "statut_dossier_comptable_septembre": "Dossier incomplet",
+    "justificatifs_manquants_septembre": "Reçu du billet de train"
+  },
+  "policies": [
+    "Utiliser le vouvoiement.",
+    "Mentionner une pièce jointe uniquement si l'état confirme qu'elle est prête et jointe."
+  ],
+  "unknownPolicy": "Indiquer que le service comptable doit confirmer l'information. Demander une vérification si elle est nécessaire à la réponse."
+}

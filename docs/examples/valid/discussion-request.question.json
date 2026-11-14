@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "messageId": "550e8400-e29b-41d4-a716-446655440001",
+    "correlationId": "660e8400-e29b-41d4-a716-446655440001",
+    "messageType": "DISCUSSION_REQUEST",
+    "schemaVersion": "1.0",
+    "producerAgentId": "AdministrationWriter",
+    "createdAt": "2026-11-13T09:00:00Z"
+  },
+  "payload": {
+    "action": "ASK_INFORMATION",
+    "task": {
+      "correlationId": "660e8400-e29b-41d4-a716-446655440001",
+      "taskId": "880e8400-e29b-41d4-a716-446655440001",
+      "attemptId": "990e8400-e29b-41d4-a716-446655440001"
+    },
+    "questions": [
+      "Quelle référence de dossier faut-il mentionner ?"
+    ],
+    "reason": "La référence manque pour la réponse.",
+    "memoryProposal": "ASK_SAVE_SCOPE"
+  }
+}

@@ -1,0 +1,35 @@
+{
+	"nodes":[
+		{"id":"c8e08713ae0908fc","type":"text","x":0,"y":-340,"width":1140,"height":180,"text":"# 06 · Correction et reprise ciblée\nCorrecting diagnostique ; Orchestrator transmet et contrôle.\nLa portée globale est une proposition soumise à validation.","color":"6"},
+		{"id":"372303fe31b50a89","type":"text","x":0,"y":200,"width":350,"height":210,"text":"## Feedback utilisateur\nStyle, omission, erreur de fond, mauvais domaine ou extraction erronée.","color":"6"},
+		{"id":"9014a2c0f458424e","type":"file","x":510,"y":200,"width":380,"height":220,"file":"02 - Agents/OrchestratorAgent.md","color":"4"},
+		{"id":"be70e4b7d47d4e34","type":"file","x":1040,"y":200,"width":380,"height":220,"file":"02 - Agents/CorrectingAgent.md","color":"6"},
+		{"id":"ecc2601fdccd064e","type":"text","x":1570,"y":-180,"width":380,"height":200,"text":"## Extraction erronée\nPARSER / REANALYZE.","color":"6"},
+		{"id":"dc3255b289637e9d","type":"text","x":1570,"y":120,"width":380,"height":200,"text":"## Mauvaise catégorie\nDECISION / REROUTE.","color":"6"},
+		{"id":"7fee56705b13bcbe","type":"text","x":1570,"y":420,"width":380,"height":200,"text":"## Fond absent ou erroné du plan\nWRITER / REVISE_PLAN.","color":"6"},
+		{"id":"e96af52843574e65","type":"text","x":1570,"y":720,"width":380,"height":200,"text":"## Style ou omission du brouillon\nSi le fait est déjà dans le plan : SCRIBE / REWRITE_DRAFT.","color":"6"},
+		{"id":"6439b4911a0c4deb","type":"file","x":2100,"y":200,"width":400,"height":260,"file":"04 - Contrats JSON/CorrectionPlan.md","color":"6"},
+		{"id":"18950b6d4f2cbc03","type":"text","x":2660,"y":200,"width":400,"height":250,"text":"## Orchestrator · Reprise\nContrôle cible, portée et autorisations.\nSollicite l’étape concernée ; réexamine les résultats dépendants.","color":"4"},
+		{"id":"22806fe0a7adabf4","type":"text","x":2100,"y":730,"width":400,"height":260,"text":"## Portée sémantique few-shot\nDRAFT / THREAD / GLOBAL proposé.\nMémoire durable : choix explicite K_perso, K_commun ou nulle part.","color":"2"},
+		{"id":"956bcc5865a2a445","type":"text","x":2660,"y":730,"width":400,"height":230,"text":"## Nouveau brouillon\nPrésenter à l’utilisateur.\nAncienne approbation invalide si la version a changé.","color":"6"},
+		{"id":"9ebd117f434a025c","type":"text","x":1040,"y":1030,"width":910,"height":200,"text":"## Ambiguïté ou document requis\nQuestion à l’administration / Orchestrator ; pas d’accès documentaire ajouté implicitement.","color":"2"},
+		{"id":"fe240310414e572d","type":"file","x":2100,"y":1140,"width":400,"height":220,"file":"05 - Conception/Suivi des taches et reprise.md","color":"2"}
+	],
+	"edges":[
+		{"id":"6e08cfe8e0fedb2f","fromNode":"372303fe31b50a89","fromSide":"right","toNode":"9014a2c0f458424e","toSide":"left","label":"feedback"},
+		{"id":"d05367a7bbcf9c55","fromNode":"9014a2c0f458424e","fromSide":"right","toNode":"be70e4b7d47d4e34","toSide":"left","label":"diagnostic demandé"},
+		{"id":"5d28312d270fbd50","fromNode":"be70e4b7d47d4e34","fromSide":"right","toNode":"ecc2601fdccd064e","toSide":"left","label":"première étape fautive"},
+		{"id":"6d3ea86ada0f6658","fromNode":"be70e4b7d47d4e34","fromSide":"right","toNode":"dc3255b289637e9d","toSide":"left","label":"première étape fautive"},
+		{"id":"3b73f1a58d9ebe19","fromNode":"be70e4b7d47d4e34","fromSide":"right","toNode":"7fee56705b13bcbe","toSide":"left","label":"première étape fautive"},
+		{"id":"5103a3a093ab4976","fromNode":"be70e4b7d47d4e34","fromSide":"right","toNode":"e96af52843574e65","toSide":"left","label":"première étape fautive"},
+		{"id":"1405d392a3cca796","fromNode":"6439b4911a0c4deb","fromSide":"right","toNode":"18950b6d4f2cbc03","toSide":"left","label":"retour via Orchestrator"},
+		{"id":"e310a659d2ab4182","fromNode":"6439b4911a0c4deb","fromSide":"bottom","toNode":"22806fe0a7adabf4","toSide":"top","label":"proposition"},
+		{"id":"78c9a8c5f58a9eff","fromNode":"18950b6d4f2cbc03","fromSide":"bottom","toNode":"956bcc5865a2a445","toSide":"top","label":"version révisée"},
+		{"id":"6ad2f2a39dde0e75","fromNode":"be70e4b7d47d4e34","fromSide":"bottom","toNode":"9ebd117f434a025c","toSide":"top","label":"clarification via Orchestrator"},
+		{"id":"9335ebfdc76cdffb","fromNode":"18950b6d4f2cbc03","fromSide":"bottom","toNode":"fe240310414e572d","toSide":"top","label":"nouvel incident"},
+		{"id":"aa20a3338d3f9fef","fromNode":"ecc2601fdccd064e","fromSide":"right","toNode":"6439b4911a0c4deb","toSide":"left","label":"cible proposée"},
+		{"id":"08fe2a9901b8f23c","fromNode":"dc3255b289637e9d","fromSide":"right","toNode":"6439b4911a0c4deb","toSide":"left","label":"cible proposée"},
+		{"id":"253d3b1f4073ed88","fromNode":"7fee56705b13bcbe","fromSide":"right","toNode":"6439b4911a0c4deb","toSide":"left","label":"cible proposée"},
+		{"id":"01faaeeef0f47148","fromNode":"e96af52843574e65","fromSide":"right","toNode":"6439b4911a0c4deb","toSide":"left","label":"cible proposée"}
+	]
+}

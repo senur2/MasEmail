@@ -1,0 +1,84 @@
+package fr.mas.email.app;
+
+import fr.mas.email.contract.JsonCodec;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import javax.swing.*;
+import java.awt.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
+import java.util.function.BooleanSupplier;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+
+class TestBenchTest {
+    @TempDir Path directory;
+
+    @Test
+    void draftApprovalAndMultilineCorrectionAreWiredToTheWindow() throws Exception {
+        assumeFalse(GraphicsEnvironment.isHeadless(), "Swing needs a graphical environment");
+        var window = edt(() -> new TestBench(new JsonCodec(), directory.resolve("runs"), "http://localhost:11434", "test"));
+        var approvalButton = edt(() -> button(window, "Valider le brouillon"));
+        try {
+            edt(() -> {
+                descendants(window).filter(JComboBox.class::isInstance).map(JComboBox.class::cast)
+                        .findFirst().orElseThrow().setSelectedIndex(1);
+                assertFalse(button(window, "Valider le brouillon").isEnabled());
+                button(window, "Générer le brouillon").doClick();
+                return null;
+            });
+            await(approvalButton::isEnabled);
+            edt(() -> { button(window, "Valider le brouillon").doClick(); return null; });
+            await(() -> descendants(window).filter(JButton.class::isInstance).map(JButton.class::cast)
+                    .anyMatch(button -> button.getText().equals("Brouillon validé")));
+            try (var files = Files.walk(directory)) {
+                assertEquals(1, files.filter(path -> path.getFileName().toString().equals("draft-approval.json")).count());
+            }
+            edt(() -> {
+                assertFalse(button(window, "Brouillon validé").isEnabled());
+                var label = descendants(window).filter(JLabel.class::isInstance).map(JLabel.class::cast)
+                        .filter(item -> item.getText().equals("Correction ou information à ajouter")).findFirst().orElseThrow();
+                var feedback = assertInstanceOf(JTextArea.class,
+                        assertInstanceOf(JScrollPane.class, label.getLabelFor()).getViewport().getView());
+                feedback.setText("Tutoie-le.\nFais plus court.");
+                assertTrue(feedback.getRows() >= 3);
+                button(window, "Corriger le brouillon").doClick();
+                return null;
+            });
+            await(() -> approvalButton.getText().equals("Valider le brouillon") && approvalButton.isEnabled());
+        } finally {
+            edt(() -> { window.dispose(); return null; });
+        }
+    }
+
+    private static JButton button(Container window, String text) {
+        return descendants(window).filter(JButton.class::isInstance).map(JButton.class::cast)
+                .filter(button -> button.getText().equals(text)).findFirst().orElseThrow();
+    }
+
+    private static Stream<Component> descendants(Component component) {
+        return Stream.concat(Stream.of(component), component instanceof Container container
+                ? Stream.of(container.getComponents()).flatMap(TestBenchTest::descendants) : Stream.empty());
+    }
+
+    private static <T> T edt(Callable<T> action) throws Exception {
+        var task = new FutureTask<>(action);
+        SwingUtilities.invokeAndWait(task);
+        return task.get();
+    }
+
+    private static void await(BooleanSupplier ready) throws Exception {
+        long deadline = System.nanoTime() + Duration.ofSeconds(15).toNanos();
+        while (System.nanoTime() < deadline) {
+            if (edt(ready::getAsBoolean)) return;
+            Thread.sleep(30);
+        }
+        fail("The Swing action did not complete");
+    }
+}

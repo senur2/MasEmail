@@ -1,0 +1,27 @@
+{
+	"nodes":[
+		{"id":"ab6faa109f261903","type":"text","text":"# 03 · Connaissances et mémoire\nSources filtrées ; documents consultés sans modification directe.\nUne déclaration dans un email n’est pas automatiquement un fait vérifié.","x":0,"y":-340,"width":1150,"height":180,"color":"4"},
+		{"id":"7616100da8c2b225","type":"text","text":"## K_commun\nRéférences et préférences communes autorisées.","x":0,"y":0,"width":380,"height":170,"color":"4"},
+		{"id":"af20ad9ee15566c3","type":"text","text":"## K_base\nHypothèses non confirmées.\nDéfinition, lien avec K_perso et droits d’écriture à trancher.","x":0,"y":660,"width":380,"height":220,"color":"2"},
+		{"id":"71ad111cd15caf41","type":"text","text":"## Lecture autorisée\nFiltrer par agent, domaine, tâche et fil.\nFournir la source des faits utilisés.\nPas de droit global implicite.","x":1140,"y":260,"width":400,"height":240,"color":"4"},
+		{"id":"cbb0574e49674779","type":"file","file":"02 - Agents/WriterAgent.md","x":1700,"y":260,"width":380,"height":220,"color":"5"},
+		{"id":"50daaf52150b4782","type":"text","text":"## « Nulle part »\nInformation utilisable pour la réponse, sans ajout K_perso/K_commun.\nElle peut figurer dans le brouillon et l’historique.","x":1700,"y":730,"width":380,"height":260,"color":"2"},
+		{"id":"810b570993c949de","type":"file","file":"03 - Monde et connaissances/SharedWorldState.md","x":560,"y":-70,"width":420,"height":220,"color":"4"},
+		{"id":"69c70d4f5892bf7e","type":"text","text":"## Choix et points ouverts\nOrientation SQL ; SQLite probable.\nRésumé mémoire + messages en fichier temporaire.\nDurées, historique durable, index/RAG et rafraîchissement à préciser.","x":560,"y":1160,"width":980,"height":260,"color":"2"},
+		{"id":"b77d436f49d80263","type":"text","text":"## K_perso par agent\nPédagogie, enseignement, administration, recherche, générique, personnel.\nSources exactes à définir.","x":-190,"y":280,"width":380,"height":220,"color":"5"},
+		{"id":"21acf89526b44d65","type":"file","file":"03 - Monde et connaissances/KnowledgeService.md","x":575,"y":260,"width":420,"height":260,"color":"4"},
+		{"id":"00c8dd09c50c4d21","type":"file","file":"02 - Agents/OrchestratorAgent.md","x":440,"y":730,"width":420,"height":250,"color":"4"},
+		{"id":"80461454b7ea7a81","type":"text","text":"## Choix utilisateur\nK_perso / K_commun / nulle part.\nSans choix explicite : aucun ajout durable.\nUne reprise n’autorise pas une mémorisation.","x":1150,"y":730,"width":400,"height":260,"color":"6"},
+		{"id":"fd2980f315cc43a7","type":"file","file":"03 - Monde et connaissances/ConversationMemory.md","x":1150,"y":-110,"width":400,"height":220,"color":"4"}
+	],
+	"edges":[
+		{"id":"44478fd75f41a68d","fromNode":"7616100da8c2b225","fromSide":"right","toNode":"21acf89526b44d65","toSide":"left","label":"références"},
+		{"id":"19ccd7182c6a56d7","fromNode":"b77d436f49d80263","fromSide":"right","toNode":"21acf89526b44d65","toSide":"left","label":"références spécialisées"},
+		{"id":"d761e818f1cfceb0","fromNode":"21acf89526b44d65","fromSide":"right","toNode":"71ad111cd15caf41","toSide":"left","label":"recherche"},
+		{"id":"f90520f16b3fdef4","fromNode":"71ad111cd15caf41","fromSide":"right","toNode":"cbb0574e49674779","toSide":"left","label":"extraits autorisés"},
+		{"id":"0bee0826112e320d","fromNode":"80461454b7ea7a81","fromSide":"left","toNode":"00c8dd09c50c4d21","toSide":"right","label":"autorisation et portée"},
+		{"id":"941773caca53417b","fromNode":"00c8dd09c50c4d21","fromSide":"top","toNode":"21acf89526b44d65","toSide":"bottom","label":"seul demandeur d’écriture autorisée"},
+		{"id":"02bc2148c7ce3223","fromNode":"00c8dd09c50c4d21","fromSide":"top","toNode":"810b570993c949de","toSide":"bottom","label":"faits après validation"},
+		{"id":"eecd4cc0ee88d6a4","fromNode":"fd2980f315cc43a7","fromSide":"bottom","toNode":"71ad111cd15caf41","toSide":"top","label":"contexte utile"}
+	]
+}

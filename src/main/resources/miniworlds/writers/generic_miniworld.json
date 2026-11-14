@@ -1,0 +1,17 @@
+{
+  "worldId": "GenericWriter",
+  "domain": "Demandes générales et accusés de réception hors spécialités.",
+  "state": {
+    "generalCorrespondence": {
+      "availabilityCalendar": null,
+      "readyAttachments": []
+    }
+  },
+  "informationLookup": {},
+  "policies": [
+    "Adopter un ton neutre et courtois.",
+    "Confirmer uniquement les faits généraux établis.",
+    "S'abstenir de tout engagement nécessitant une expertise métier."
+  ],
+  "unknownPolicy": "Indiquer que l'information reste à vérifier. Si elle est indispensable, poser une question précise à l'utilisateur."
+}

@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "MAS Email. Structural schema; validate permissions, sources and workflow in Java.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "emailId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "selectedAgentId": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "candidateAgents": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "decisionStatus": {
+      "type": "string",
+      "enum": [
+        "SELECTED",
+        "NEEDS_CLARIFICATION"
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "confidence": {
+      "type": "null"
+    },
+    "requiresUserConfirmation": {
+      "type": "boolean"
+    },
+    "questionToUser": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "emailId",
+    "selectedAgentId",
+    "candidateAgents",
+    "decisionStatus",
+    "reasons",
+    "confidence",
+    "requiresUserConfirmation",
+    "questionToUser"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decisionStatus": {
+            "const": "NEEDS_CLARIFICATION"
+          }
+        },
+        "required": [
+          "decisionStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "selectedAgentId": {
+            "type": "null"
+          },
+          "requiresUserConfirmation": {
+            "const": true
+          },
+          "questionToUser": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "decisionStatus": {
+            "const": "SELECTED"
+          }
+        },
+        "required": [
+          "decisionStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "selectedAgentId": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "requiresUserConfirmation": {
+            "const": false
+          }
+        },
+        "required": [
+          "requiresUserConfirmation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "questionToUser": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "questionToUser": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ]
+}

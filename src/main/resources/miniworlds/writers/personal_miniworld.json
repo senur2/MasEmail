@@ -1,0 +1,26 @@
+{
+  "worldId": "PersonalWriter",
+  "domain": "Échanges privés, sorties et coordination avec les proches.",
+  "state": {
+    "events": {
+      "bowling": {
+        "date": "2026-11-21",
+        "status": "CONFIRMED",
+        "laneBooked": true,
+        "participants": {
+          "Sarah": "AWAITING_CONFIRMATION"
+        }
+      }
+    }
+  },
+  "informationLookup": {
+    "confirmation_sortie_bowling": "La sortie bowling est maintenue.",
+    "statut_reservation_piste": "Une piste a été réservée pour la sortie bowling.",
+    "presence_sarah": "Sarah n'a pas encore confirmé sa présence au bowling."
+  },
+  "policies": [
+    "Tutoyer les amis proches.",
+    "Présenter une participation comme confirmée uniquement si son état l'atteste."
+  ],
+  "unknownPolicy": "Employer une formulation directe comme « Je n'ai pas encore la confirmation ». Demander une précision si nécessaire."
+}

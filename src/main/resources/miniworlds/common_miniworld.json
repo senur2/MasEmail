@@ -1,0 +1,21 @@
+{
+  "worldId": "COMMON_WORLD",
+  "userProfile": {
+    "fullName": "Camille Laurent",
+    "roles": ["Enseignante en informatique", "Chercheuse"],
+    "email": "camille.laurent@example.org",
+    "institution": "Université des Rives"
+  },
+  "temporalContext": {
+    "currentDate": "2026-11-13",
+    "dayOfWeek": "FRIDAY",
+    "timezone": "Europe/Paris"
+  },
+  "globalCommunicationRules": {
+    "defaultSignatures": {
+      "formal": "Cordialement,\nCamille Laurent\nUniversité des Rives",
+      "informal": "À bientôt,\nCamille"
+    },
+    "antiHallucination": "Ne jamais inventer une date, un montant, un statut ou un document absent des MiniWorlds."
+  }
+}

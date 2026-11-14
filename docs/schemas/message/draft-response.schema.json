@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "MAS Email. Structural schema; validate permissions, sources and workflow in Java.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "messageId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "correlationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "messageType": {
+          "const": "DRAFT_RESPONSE"
+        },
+        "schemaVersion": {
+          "const": "1.0"
+        },
+        "producerAgentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "messageId",
+        "correlationId",
+        "messageType",
+        "schemaVersion",
+        "producerAgentId",
+        "createdAt"
+      ]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "emailId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "planId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "DRAFT"
+        }
+      },
+      "required": [
+        "emailId",
+        "planId",
+        "subject",
+        "body",
+        "status"
+      ]
+    }
+  },
+  "required": [
+    "metadata",
+    "payload"
+  ]
+}

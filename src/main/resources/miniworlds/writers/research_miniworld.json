@@ -1,0 +1,32 @@
+{
+  "worldId": "ResearchWriter",
+  "domain": "Projets de recherche, réunions et soumissions scientifiques.",
+  "state": {
+    "projects": {
+      "ORION": {
+        "nextMeeting": "2026-11-23T14:00:00+01:00",
+        "meetingRoom": null
+      }
+    },
+    "submissions": [
+      {
+        "title": "Ordonnancement distribué pour les systèmes hybrides",
+        "venue": "EuroSys 2027",
+        "status": "SUBMITTED",
+        "cameraReadyDeadline": null,
+        "cameraReadySubmitted": false,
+        "authorRegistered": false
+      }
+    ]
+  },
+  "informationLookup": {
+    "date_prochaine_reunion_orion": "2026-11-23T14:00:00+01:00",
+    "date_reunion_projet_orion": "2026-11-23T14:00:00+01:00",
+    "next_meeting_date": "2026-11-23T14:00:00+01:00"
+  },
+  "policies": [
+    "Les clés de réunion concernent uniquement le projet ORION.",
+    "Communiquer uniquement les informations autorisées pour le projet."
+  ],
+  "unknownPolicy": "Signaler que l'information reste à confirmer. Demander une clarification si elle conditionne la réponse."
+}

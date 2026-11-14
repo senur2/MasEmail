@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "MAS Email. Structural schema; validate permissions, sources and workflow in Java.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "messageId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "correlationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "messageType": {
+          "const": "DISCUSSION_REQUEST"
+        },
+        "schemaVersion": {
+          "const": "1.0"
+        },
+        "producerAgentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "messageId",
+        "correlationId",
+        "messageType",
+        "schemaVersion",
+        "producerAgentId",
+        "createdAt"
+      ]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "ASK_INFORMATION"
+        },
+        "task": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "correlationId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "taskId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "attemptId": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": [
+            "correlationId",
+            "taskId",
+            "attemptId"
+          ]
+        },
+        "questions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "memoryProposal": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "ASK_SAVE_SCOPE"
+          ]
+        }
+      },
+      "required": [
+        "action",
+        "task",
+        "questions",
+        "reason",
+        "memoryProposal"
+      ]
+    }
+  },
+  "required": [
+    "metadata",
+    "payload"
+  ]
+}

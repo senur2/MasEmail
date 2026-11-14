@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "messageId": "550e8400-e29b-41d4-a716-446655440001",
+    "correlationId": "660e8400-e29b-41d4-a716-446655440001",
+    "messageType": "EMAIL_ANALYSIS",
+    "schemaVersion": "3.0",
+    "producerAgentId": "ParserAgent",
+    "createdAt": "2026-11-13T09:00:00Z"
+  },
+  "payload": {
+    "emailId": "email-001",
+    "threadId": "thread-007",
+    "language": "fr",
+    "intent": "REQUEST_INFORMATION",
+    "topics": [
+      "RESEARCH_PROJECT",
+      "MEETING"
+    ],
+    "entities": [
+      {
+        "type": "PROJECT",
+        "value": "ORION"
+      }
+    ],
+    "requestedInformation": [
+      "next_meeting_date"
+    ],
+    "senderClaims": [
+      "L'expéditeur pense que la salle habituelle est peut-être indisponible."
+    ],
+    "uncertainties": [
+      "La disponibilité de la salle habituelle reste incertaine."
+    ],
+    "evidence": [
+      {
+        "field": "requestedInformation",
+        "text": "Peux-tu me dire à quelle date aura lieu la prochaine réunion du projet ORION ?"
+      },
+      {
+        "field": "uncertainties",
+        "text": "Je pense que la salle habituelle est peut-être indisponible."
+      }
+    ],
+    "requestedActions": []
+  }
+}

@@ -1,0 +1,33 @@
+{
+	"nodes":[
+		{"id":"c940647dceec9b24","type":"text","x":0,"y":-340,"width":1160,"height":180,"text":"# 04 · Cycle BDI d’un Writer\nExemple fictif : date de réunion ORION. Une date inconnue ne doit pas être inventée.\nCe cycle ne s’impose pas à Parser et Scribe.","color":"5"},
+		{"id":"d6b5089543aadb5e","type":"text","x":0,"y":0,"width":380,"height":220,"text":"## Perception\nMission via Orchestrator, EmailAnalysis, email et fil autorisés.","color":"5"},
+		{"id":"a2c41e1fab0de95a","type":"text","x":520,"y":0,"width":380,"height":220,"text":"## Beliefs\nDemande sur ORION ; date connue ou inconnue.\nLecture du monde autorisé, sans écriture directe.","color":"5"},
+		{"id":"de35abd73fd590b2","type":"text","x":1040,"y":0,"width":380,"height":220,"text":"## Desires\nRépondre avec exactitude ; respecter les droits ; ne pas s’engager sans accord.","color":"5"},
+		{"id":"68e98b1969917d4a","type":"text","x":1560,"y":0,"width":380,"height":220,"text":"## Délibération\nExaminer les informations et les contraintes ; déterminer le plan réalisable.","color":"5"},
+		{"id":"24cefaa72875c071","type":"text","x":2080,"y":-80,"width":400,"height":220,"text":"## Plan A · Répondre\nSource autorisée et date confirmée : sélectionner le fait et sa sourceRef.","color":"5"},
+		{"id":"37d78debc5ea2579","type":"text","x":2080,"y":310,"width":400,"height":240,"text":"## Plan B · Clarifier\nDate inconnue : question précise via Orchestrator.\nAttendre l’utilisateur, sans inventer.","color":"2"},
+		{"id":"8e22280f4789217c","type":"text","x":2600,"y":150,"width":400,"height":240,"text":"## Intention retenue\nPréparer le plan ou demander l’information.\nRéviser après correction ou nouvelle donnée.","color":"5"},
+		{"id":"99b8a3c4e7db4fc9","type":"file","x":3120,"y":150,"width":390,"height":240,"file":"04 - Contrats JSON/ResponsePlan.md","color":"5"},
+		{"id":"f92adde383594dc7","type":"file","x":520,"y":690,"width":380,"height":220,"file":"03 - Monde et connaissances/SharedWorldState.md","color":"4"},
+		{"id":"a2bdf11cc5184fc0","type":"file","x":1560,"y":690,"width":380,"height":220,"file":"03 - Monde et connaissances/KnowledgeService.md","color":"4"},
+		{"id":"da4587eee08a470f","type":"file","x":0,"y":690,"width":380,"height":220,"file":"02 - Agents/WriterAgent.md","color":"5"},
+		{"id":"1685f582606a0f68","type":"text","x":2600,"y":690,"width":400,"height":250,"text":"## Retour et révision\nOrchestrator relaie feedback et réponses.\nMises à jour communes contrôlées ; résultats dépendants à réexaminer.","color":"6"},
+		{"id":"33cbdbdd2c87ba6e","type":"file","x":3120,"y":690,"width":390,"height":250,"file":"05 - Conception/Suivi des taches et reprise.md","color":"2"}
+	],
+	"edges":[
+		{"id":"18db8e124edb6287","fromNode":"d6b5089543aadb5e","fromSide":"right","toNode":"a2c41e1fab0de95a","toSide":"left","label":"percevoir"},
+		{"id":"ab2f3439475d4637","fromNode":"a2c41e1fab0de95a","fromSide":"right","toNode":"de35abd73fd590b2","toSide":"left","label":"objectifs"},
+		{"id":"91f862a6d110b445","fromNode":"de35abd73fd590b2","fromSide":"right","toNode":"68e98b1969917d4a","toSide":"left","label":"délibérer"},
+		{"id":"fffd57464baf0f86","fromNode":"68e98b1969917d4a","fromSide":"right","toNode":"24cefaa72875c071","toSide":"left","label":"si suffisant"},
+		{"id":"8978fd5941d226bc","fromNode":"68e98b1969917d4a","fromSide":"right","toNode":"37d78debc5ea2579","toSide":"left","label":"si manque"},
+		{"id":"f6f6810b9fb45eef","fromNode":"24cefaa72875c071","fromSide":"right","toNode":"8e22280f4789217c","toSide":"left","label":"plan réalisable"},
+		{"id":"0f0f5af2506d9116","fromNode":"37d78debc5ea2579","fromSide":"right","toNode":"8e22280f4789217c","toSide":"left","label":"clarification"},
+		{"id":"7f3925816000ea67","fromNode":"8e22280f4789217c","fromSide":"right","toNode":"99b8a3c4e7db4fc9","toSide":"left","label":"quatre champs cognitifs"},
+		{"id":"efeb0f21e3aa505a","fromNode":"f92adde383594dc7","fromSide":"top","toNode":"a2c41e1fab0de95a","toSide":"bottom","label":"lecture"},
+		{"id":"c2f2998bf0bc619b","fromNode":"a2bdf11cc5184fc0","fromSide":"top","toNode":"68e98b1969917d4a","toSide":"bottom","label":"sources"},
+		{"id":"6f2bfea623798eaa","fromNode":"99b8a3c4e7db4fc9","fromSide":"bottom","toNode":"1685f582606a0f68","toSide":"top","label":"via Orchestrator"},
+		{"id":"10774570e94f9b3b","fromNode":"1685f582606a0f68","fromSide":"left","toNode":"a2c41e1fab0de95a","toSide":"right","label":"réexaminer"},
+		{"id":"caa85bf90f0227f8","fromNode":"99b8a3c4e7db4fc9","fromSide":"bottom","toNode":"33cbdbdd2c87ba6e","toSide":"top","label":"sortie invalide / échec"}
+	]
+}

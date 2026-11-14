@@ -1,0 +1,24 @@
+{
+	"nodes":[
+		{"id":"9af1bdcbe0454d53","type":"file","file":"04 - Contrats JSON/CorrectionPlan.md","x":1650,"y":540,"width":400,"height":300,"color":"6"},
+		{"id":"08a77806a546e2ec","type":"text","text":"# 07 · Contrats conceptuels de messages\nLes flèches décrivent les dépendances ; les transmissions passent par Orchestrator.\nLe LLM génère le contenu utile ; le système ajoute les métadonnées.","x":-115,"y":-600,"width":1180,"height":180,"color":"4"},
+		{"id":"c11256381c414bba","type":"file","file":"04 - Contrats JSON/EmailAnalysis.md","x":-315,"y":0,"width":400,"height":300,"color":"4"},
+		{"id":"0336516cc87743d9","type":"file","file":"04 - Contrats JSON/RouteDecision.md","x":400,"y":0,"width":400,"height":300,"color":"4"},
+		{"id":"43084d726e8d4706","type":"file","file":"04 - Contrats JSON/ResponsePlan.md","x":1000,"y":0,"width":400,"height":300,"color":"5"},
+		{"id":"95e3cb3dffad407c","type":"file","file":"04 - Contrats JSON/DraftResponse.md","x":1650,"y":-80,"width":400,"height":300,"color":"6"},
+		{"id":"4266457f89f04b0d","type":"text","text":"## Encore ouverts\nSchémas programmés, délais, seuils et limites de reprise.\nCes exemples ne commencent pas la conception de classes.","x":-360,"y":960,"width":950,"height":240,"color":"2"},
+		{"id":"c32ed2bf59adc261","type":"file","file":"04 - Contrats JSON/errorJSON.md","x":1000,"y":1080,"width":400,"height":300,"color":"2"},
+		{"id":"2c2e5dbf295e6d85","type":"text","text":"## Invariants\nVersion et tâche attendues.\nStructure et cohérence contrôlées.\nUn JSON valide ne garantit pas la qualité métier.\nAucune sortie LLM n’autorise l’envoi.","x":-515,"y":600,"width":400,"height":240,"color":"4"},
+		{"id":"796087b8b1fb098b","type":"file","file":"04 - Contrats JSON/DiscussionPlan - Agent - Orchestrator   Orchestrator - User  User-Orchestrator.md","x":0,"y":480,"width":400,"height":300,"color":"4"},
+		{"id":"a00d429cf055d262","type":"file","file":"02 - Agents/OrchestratorAgent.md","x":1000,"y":540,"width":400,"height":300,"color":"4"}
+	],
+	"edges":[
+		{"id":"89060e8da3e77c86","fromNode":"c11256381c414bba","fromSide":"right","toNode":"0336516cc87743d9","toSide":"left","label":"routage"},
+		{"id":"741c88b6d094ee5f","fromNode":"0336516cc87743d9","fromSide":"right","toNode":"43084d726e8d4706","toSide":"left","label":"profil choisi"},
+		{"id":"7e6f3072e8abbe07","fromNode":"43084d726e8d4706","fromSide":"right","toNode":"95e3cb3dffad407c","toSide":"left","label":"formulation"},
+		{"id":"7c0f4eafcd9b3fb7","fromNode":"95e3cb3dffad407c","fromSide":"bottom","toNode":"9af1bdcbe0454d53","toSide":"top","label":"feedback utilisateur"},
+		{"id":"80a172bb3345ace4","fromNode":"9af1bdcbe0454d53","fromSide":"left","toNode":"a00d429cf055d262","toSide":"right","label":"CorrectionPlan"},
+		{"id":"44c4895673c8abb0","fromNode":"796087b8b1fb098b","fromSide":"right","toNode":"a00d429cf055d262","toSide":"left","label":"questions et réponses"},
+		{"id":"fcc5779b6fffb352","fromNode":"c32ed2bf59adc261","fromSide":"top","toNode":"a00d429cf055d262","toSide":"bottom","label":"arrêt et signalement"}
+	]
+}

@@ -1,0 +1,25 @@
+{
+	"nodes":[
+		{"id":"304f2b8141d5bee6","type":"text","text":"# 02 · Routage\nDecisionAgent : règles fixes V1, puis approche JEV-like locale.\nOrchestrator assure la transmission et l’exécution de la décision.","x":0,"y":-340,"width":1100,"height":180,"color":"4"},
+		{"id":"b6855ba54507489c","type":"file","file":"02 - Agents/DecisionAgent.md","x":1060,"y":0,"width":380,"height":220,"color":"4"},
+		{"id":"9bc20249c05041b2","type":"file","file":"04 - Contrats JSON/RouteDecision.md","x":1590,"y":0,"width":380,"height":220,"color":"4"},
+		{"id":"a88aec6b3687a856","type":"text","text":"## Un profil justifié\nOrchestrator attribue la tâche au Writer sélectionné.\nRôle, sujet, contenu et fil sont considérés.","x":2120,"y":-80,"width":390,"height":240,"color":"5"},
+		{"id":"f053523908f74b57","type":"text","text":"## Plusieurs candidats\nClarification via Orchestrator.\nPas de score arbitraire ni de sélection imposée.","x":2120,"y":280,"width":390,"height":220,"color":"2"},
+		{"id":"6e1e0d6f1f577fd3","type":"text","text":"## Aucun choix justifié\nGenericWriter si la politique l’autorise ; sinon clarification.\nAucun fallback automatique après plantage.","x":2120,"y":620,"width":390,"height":230,"color":"2"},
+		{"id":"36c62c52df95d25e","type":"file","file":"05 - Conception/Suivi des taches et reprise.md","x":530,"y":760,"width":380,"height":230,"color":"2"},
+		{"id":"f1e06f36bd2749bd","type":"file","file":"04 - Contrats JSON/EmailAnalysis.md","x":-190,"y":-60,"width":380,"height":220,"color":"4"},
+		{"id":"890d2b35ad8b48ec","type":"file","file":"03 - Monde et connaissances/AgentRegistry.md","x":-190,"y":360,"width":380,"height":220,"color":"4"},
+		{"id":"b3a68f6e18b34c28","type":"file","file":"02 - Agents/OrchestratorAgent.md","x":530,"y":-60,"width":380,"height":220,"color":"4"},
+		{"id":"dac9f8f0c010531c","type":"text","text":"## À préciser\nCritères et priorités V1 ; recours générique ; modèle JEV-like local ; scores, calibration et seuils.\nTeacherWriter / profil personnel : voir le registre.","x":1060,"y":500,"width":920,"height":270,"color":"2"}
+	],
+	"edges":[
+		{"id":"f77f222bccd664bb","fromNode":"f1e06f36bd2749bd","fromSide":"right","toNode":"b3a68f6e18b34c28","toSide":"left","label":"analyse reçue"},
+		{"id":"af35427f563dc69a","fromNode":"890d2b35ad8b48ec","fromSide":"right","toNode":"b6855ba54507489c","toSide":"left","label":"compétences via Orchestrator"},
+		{"id":"8319c4bbab661e89","fromNode":"b3a68f6e18b34c28","fromSide":"right","toNode":"b6855ba54507489c","toSide":"left","label":"demande de routage"},
+		{"id":"5ba89f26119bbe1f","fromNode":"b6855ba54507489c","fromSide":"right","toNode":"9bc20249c05041b2","toSide":"left","label":"décision retournée à Orchestrator"},
+		{"id":"a28a4f40a390328c","fromNode":"9bc20249c05041b2","fromSide":"right","toNode":"a88aec6b3687a856","toSide":"left","label":"SELECTED"},
+		{"id":"e99145694d8cbfc0","fromNode":"9bc20249c05041b2","fromSide":"right","toNode":"f053523908f74b57","toSide":"left","label":"ambiguïté"},
+		{"id":"cfc31f740a47b97f","fromNode":"9bc20249c05041b2","fromSide":"bottom","toNode":"6e1e0d6f1f577fd3","toSide":"top","label":"aucun candidat pertinent"},
+		{"id":"3bab6577b7dd99f7","fromNode":"b6855ba54507489c","fromSide":"bottom","toNode":"36c62c52df95d25e","toSide":"top","label":"erreur / absence → Orchestrator"}
+	]
+}

@@ -1,0 +1,131 @@
+
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "language",
+    "requestedInformation",
+    "requestedActions",
+    "senderClaims",
+    "uncertainties",
+    "entities",
+    "topics",
+    "intent",
+    "evidence"
+  ],
+  "properties": {
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2}$"
+    },
+    "requestedInformation": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "requestedActions": {
+      "type": "array",
+      "description": "Actions explicitement demandées au destinataire",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "description",
+          "deadline"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*$"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "deadline": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "senderClaims": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "uncertainties": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*$"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_]*$"
+      }
+    },
+    "intent": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "field",
+          "text"
+        ],
+        "properties": {
+          "field": {
+            "type": "string",
+            "enum": [
+              "language",
+              "requestedInformation",
+              "requestedActions",
+              "senderClaims",
+              "uncertainties",
+              "entities",
+              "topics",
+              "intent"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}
