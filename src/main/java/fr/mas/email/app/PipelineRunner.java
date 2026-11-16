@@ -176,6 +176,16 @@ final class PipelineRunner {
         }
     }
 
+    synchronized void simulateSend(DraftResponse draft, Path directory) throws IOException {
+        if (threadHistory == null) throw new IllegalStateException("A conversation is required");
+        var worlds = new FileWorldStore(directory, json);
+        var approval = mediator(worlds).draftApproval()
+                .filter(item -> item.draft().equals(draft))
+                .orElseThrow(() -> new IllegalStateException("A current draft approval is required"));
+        conversations().recordApprovedReply(threadHistory.threadId(), draft.emailId(), approval.draft().body());
+        Files.writeString(directory.resolve(LOG_NAME), "\n=== Envoi simulé · historique du banc de test ===\n", UTF_8, APPEND);
+    }
+
     synchronized fr.mas.email.mail.MailDelivery send(fr.mas.email.mail.MailAccount account,
             fr.mas.email.mail.ReceivedMail original, DraftResponse draft, char[] credential,
             fr.mas.email.mail.MailService mail, Path directory) throws IOException {

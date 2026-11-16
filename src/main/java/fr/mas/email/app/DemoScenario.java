@@ -17,8 +17,11 @@ import java.util.List;
 
 final class DemoScenario {
     private static final String QUESTION = "À quelle date les notes du cours INF312 seront-elles publiées ?";
+    private static final String FOLLOW_UP_QUESTION = "Pouvez-vous me rappeler la date de publication des notes du cours INF312 ?";
+    static final String SUBJECT = "Publication des notes d’INF312";
     static final String EMAIL = "Objet : Publication des notes d’INF312\n\nBonjour,\n"
             + QUESTION + "\n\nMerci,\nNina";
+    static final String FOLLOW_UP = "Bonjour,\n" + FOLLOW_UP_QUESTION + "\n\nMerci,\nNina";
 
     private DemoScenario() {}
 
@@ -27,9 +30,29 @@ final class DemoScenario {
     }
 
     static FakeLlmGateway gateway(JsonCodec json, boolean clarification) {
+        return gateway(json, clarification, QUESTION);
+    }
+
+    static LlmGateway benchGateway(JsonCodec json, boolean clarification, boolean followUp) {
+        var fake = gateway(json, clarification, followUp ? FOLLOW_UP_QUESTION : QUESTION);
+        if (!clarification) return fake;
+        return new LlmGateway() {
+            @Override public <T> AgentResult<T> generate(LlmRequest<T> request, TaskContext task, String component) {
+                if (request.expectedContract().equals(fr.mas.email.contract.Contract.DRAFT_CONTENT)) {
+                    var input = json.read(request.input(), com.fasterxml.jackson.databind.JsonNode.class);
+                    var plan = input.has("responsePlan") ? input.path("responsePlan") : input;
+                    String fact = plan.path("factsToCommunicate").path(0).path("text").asText();
+                    fake.enqueueJson(json.write(new DraftContent("Re: " + SUBJECT, "Bonjour,\n\n" + fact + "\n\nCordialement,")));
+                }
+                return fake.generate(request, task, component);
+            }
+        };
+    }
+
+    private static FakeLlmGateway gateway(JsonCodec json, boolean clarification, String question) {
         var analysis = new EmailAnalysis.Content("fr", "REQUEST_INFORMATION", List.of("EVALUATION"),
                 List.of(new EmailAnalysis.Entity("COURSE", "INF312")), List.of("date_publication_notes"),
-                List.of(), List.of(), List.of(), List.of(new EmailAnalysis.Evidence("requestedInformation", QUESTION)));
+                List.of(), List.of(), List.of(), List.of(new EmailAnalysis.Evidence("requestedInformation", question)));
         var route = new RouteDecision.Content("AcademicWriter", List.of("AcademicWriter"),
                 RouteDecision.DecisionStatus.SELECTED, List.of("La demande porte sur les notes d’un cours."),
                 null, false, null);

@@ -39,6 +39,10 @@ Au démarrage, cliquez sur **Tester sans compte**.
 - Pour tester le parcours avec des réponses prédéfinies, choisissez **Simulation INF312** ou **Simulation clarification** et utilisez l’exemple intégré. Le second scénario permet de répondre à une demande de clarification et de choisir si la réponse doit être mémorisée.
 - Relisez le brouillon, demandez une correction si nécessaire et cliquez sur **Valider le brouillon** pour enregistrer votre approbation locale. **Ouvrir le journal** affiche le détail de l’exécution.
 
+Pour tester un fil, gardez le même **Objet du fil de test**. Après validation, cliquez sur **Simuler l’envoi**, puis sur **Tour suivant**. Le panneau **Historique du fil** affiche les tours précédents et les réponses simulées. En mode **Ollama local**, collez le nouveau message. En simulation, le message de suivi est chargé automatiquement.
+
+Pour tester la mémoire persistante, lancez **Simulation clarification**, saisissez une date et choisissez **K-Commun** ou **K-Particulier**. Au tour suivant, le Writer réutilise la date enregistrée. Avec **Répondre sans enregistrer**, la clarification est redemandée au prochain tour si la date n’a pas déjà été mémorisée. Le journal indique la portée choisie et les faits retenus par le Writer. Les conversations de test sont séparées de Gmail et les simulations ont leur propre historique.
+
 Pour ouvrir directement le banc de test en ligne de commande, ajoutez `--test-bench` après le nom du JAR.
 
 ### Utiliser Gmail

@@ -21,6 +21,46 @@ class TestBenchTest {
     @TempDir Path directory;
 
     @Test
+    void clarificationMemoryAndSimulatedDeliveryAreReusableOnTheNextTurn() throws Exception {
+        assumeFalse(GraphicsEnvironment.isHeadless(), "Swing needs a graphical environment");
+        var window = edt(() -> new TestBench(new JsonCodec(), directory.resolve("runs"), "http://localhost:11434", "test"));
+        String fact = "Publication le 27 novembre à 14 h.";
+        try {
+            edt(() -> {
+                descendants(window).filter(JComboBox.class::isInstance).map(JComboBox.class::cast)
+                        .findFirst().orElseThrow().setSelectedIndex(2);
+                button(window, "Générer le brouillon").doClick();
+                return null;
+            });
+            await(() -> button(window, "Répondre à la clarification").isEnabled());
+            edt(() -> {
+                var label = descendants(window).filter(JLabel.class::isInstance).map(JLabel.class::cast)
+                        .filter(item -> item.getText().equals("Votre réponse")).findFirst().orElseThrow();
+                var answer = (JTextArea) ((JScrollPane) label.getLabelFor()).getViewport().getView();
+                answer.setText(fact);
+                descendants(window).filter(JRadioButton.class::isInstance).map(JRadioButton.class::cast)
+                        .filter(button -> button.getText().contains("K-Commun")).findFirst().orElseThrow().doClick();
+                button(window, "Répondre à la clarification").doClick();
+                return null;
+            });
+            await(() -> button(window, "Valider le brouillon").isEnabled());
+            edt(() -> { button(window, "Valider le brouillon").doClick(); return null; });
+            await(() -> button(window, "Simuler l’envoi").isEnabled());
+            edt(() -> { button(window, "Simuler l’envoi").doClick(); return null; });
+            await(() -> button(window, "Tour suivant").isEnabled() && !button(window, "Simuler l’envoi").isEnabled());
+            edt(() -> { button(window, "Tour suivant").doClick(); return null; });
+            await(() -> descendants(window).filter(JTextArea.class::isInstance).map(JTextArea.class::cast)
+                    .anyMatch(area -> area.getText().contains("Réponse simulée :") && area.getText().contains(fact)));
+            edt(() -> { button(window, "Générer le brouillon").doClick(); return null; });
+            await(() -> button(window, "Valider le brouillon").isEnabled());
+            assertTrue(edt(() -> descendants(window).filter(JTextArea.class::isInstance).map(JTextArea.class::cast)
+                    .anyMatch(area -> area.getText().contains("date publication notes : " + fact))));
+        } finally {
+            edt(() -> { window.dispose(); return null; });
+        }
+    }
+
+    @Test
     void draftApprovalAndMultilineCorrectionAreWiredToTheWindow() throws Exception {
         assumeFalse(GraphicsEnvironment.isHeadless(), "Swing needs a graphical environment");
         var window = edt(() -> new TestBench(new JsonCodec(), directory.resolve("runs"), "http://localhost:11434", "test"));

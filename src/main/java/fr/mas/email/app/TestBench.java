@@ -71,6 +71,11 @@ final class TestBench extends JFrame {
     private fr.mas.email.mail.ReceivedMail loadedMail;
     private fr.mas.email.mail.ReceivedMail runMail;
     private final JButton send = button("Envoyer la réponse validée", true);
+    private final JButton simulateSend = button("Simuler l’envoi", false);
+    private final JButton nextTurn = button("Tour suivant", false);
+    private final JTextField testSubject = new JTextField(DemoScenario.SUBJECT);
+    private fr.mas.email.mail.ReceivedMail testMail;
+    private long historyRevision;
     private final JButton editEmail = button("Modifier l’email entrant", false);
     private boolean sendAttempted;
     private final JTextArea email = textArea(true);
@@ -159,20 +164,29 @@ final class TestBench extends JFrame {
             });
         }
         email.setCaretPosition(0);
-        mode.addActionListener(event -> updateControls());
+        mode.addActionListener(event -> {
+            updateControls();
+            if (workspace == null) previewTestHistory();
+        });
+        testSubject.addActionListener(event -> previewTestHistory());
         example.addActionListener(event -> {
+            testSubject.setText(DemoScenario.SUBJECT);
             email.setText(DemoScenario.EMAIL);
             email.setCaretPosition(0);
             email.requestFocusInWindow();
+            previewTestHistory();
         });
+        nextTurn.addActionListener(event -> prepareNextTurn());
         run.addActionListener(event -> startRun());
         openLog.addActionListener(event -> openLog());
         clarify.addActionListener(event -> clarify());
         correct.addActionListener(event -> correct());
         approve.addActionListener(event -> approve());
         send.addActionListener(event -> send());
+        simulateSend.addActionListener(event -> simulateSend());
         editEmail.addActionListener(event -> editEmail());
         updateControls();
+        if (workspace == null) previewTestHistory();
     }
 
     private void refreshModels() {
@@ -239,23 +253,20 @@ final class TestBench extends JFrame {
 
         var work = new JPanel(new BorderLayout(0, 12));
         work.setOpaque(false);
-        var input = card("Email entrant", scroll(email));
-        if (mailbox != null) {
-            var mailInput = new JPanel(new BorderLayout(0, 8));
-            mailInput.add(mailbox, BorderLayout.NORTH);
-            var message = new JPanel(new BorderLayout(0, 8));
-            threadHistory.setRows(5);
-            historyPane.setBorder(BorderFactory.createTitledBorder("Historique du fil"));
-            historyPane.setVisible(false);
-            message.add(historyPane, BorderLayout.NORTH);
-            message.add(scroll(email), BorderLayout.CENTER);
-            mailInput.add(message, BorderLayout.CENTER);
-            input.add(mailInput, BorderLayout.CENTER);
-        }
+        var mailInput = new JPanel(new BorderLayout(0, 8));
+        mailInput.add(mailbox == null ? field("Objet du fil de test", testSubject) : mailbox, BorderLayout.NORTH);
+        var message = new JPanel(new BorderLayout(0, 8));
+        threadHistory.setRows(5);
+        historyPane.setBorder(BorderFactory.createTitledBorder("Historique du fil"));
+        historyPane.setVisible(false);
+        message.add(historyPane, BorderLayout.NORTH);
+        message.add(scroll(email), BorderLayout.CENTER);
+        mailInput.add(message, BorderLayout.CENTER);
+        var input = card("Email entrant", mailInput);
         var actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         actions.setOpaque(false);
         actions.add(example);
-        if (workspace != null) actions.add(editEmail);
+        actions.add(workspace == null ? nextTurn : editEmail);
         actions.add(run);
         input.add(actions, BorderLayout.SOUTH);
 
@@ -272,7 +283,7 @@ final class TestBench extends JFrame {
         draftActions.setOpaque(false);
         draftActions.add(approve);
         draftActions.add(correct);
-        if (workspace != null) draftActions.add(send);
+        draftActions.add(workspace == null ? simulateSend : send);
         correctionForm.add(draftActions, BorderLayout.SOUTH);
         output.add(correctionForm, BorderLayout.SOUTH);
         outputCards.add(card("Brouillon à relire", output), "draft");
@@ -330,8 +341,14 @@ final class TestBench extends JFrame {
             email.requestFocusInWindow();
             return;
         }
-        if (simulation && !DemoScenario.EMAIL.equals(message)) {
-            setSummary("La simulation utilise l’exemple INF312. Chargez-le pour continuer.", WAITING);
+        if (simulation && !DemoScenario.EMAIL.equals(message) && !DemoScenario.FOLLOW_UP.equals(message)) {
+            setSummary("La simulation utilise l’exemple INF312 ou son message de suivi.", WAITING);
+            return;
+        }
+        String subject = testSubject.getText().strip();
+        if (workspace == null && subject.isEmpty()) {
+            setSummary("Indiquez un objet pour identifier le fil de test.", WAITING);
+            testSubject.requestFocusInWindow();
             return;
         }
         String endpoint = address.getText().strip();
@@ -350,11 +367,17 @@ final class TestBench extends JFrame {
         runEngine = engine;
         runEndpoint = endpoint;
         runModel = modelTag;
-        runMail = loadedMail;
+        if (workspace == null && (testMail == null || !testMail.summary().subject().equals(subject)
+                || !testMail.body().equals(message))) {
+            testMail = newTestMail(subject, message);
+        }
+        runMail = workspace == null ? testMail : loadedMail;
+        showThreadHistory(runMail, historyDirectory(simulation));
         sendAttempted = false;
         outputLayout.show(outputCards, "draft");
         runner = workspace == null
-                ? new PipelineRunner(json, root.resolveSibling(simulation ? "simulation-knowledge" : "knowledge"))
+                ? new PipelineRunner(json, root.resolveSibling(simulation ? "simulation-knowledge" : "knowledge"),
+                        true, historyDirectory(simulation), runMail)
                 : new PipelineRunner(json, workspace.knowledgeDirectory(), false,
                         workspace.runsDirectory().resolve("threads"), runMail);
         busy = true;
@@ -408,7 +431,7 @@ final class TestBench extends JFrame {
         review = new PipelineRunner.DraftReview(null, false, false, false);
         runner = null; pending = null; logPath = null; sendAttempted = false;
         email.setText(message == null ? "" : message.parserText()); email.setCaretPosition(0);
-        showThreadHistory(message);
+        showThreadHistory(message, message == null ? null : historyDirectory(false));
         draftSubject.setText(""); draftBody.setText(""); feedback.setText("");
         logLocation.setText("Aucun journal pour cet email");
         outputLayout.show(outputCards, "draft");
@@ -416,11 +439,40 @@ final class TestBench extends JFrame {
         setSummary(message == null ? "Compte changé. Connectez Gmail et ouvrez un email." : "Email chargé. Vous pouvez générer le brouillon.", ACCENT);
     }
 
-    private void showThreadHistory(fr.mas.email.mail.ReceivedMail mail) {
+    private void prepareNextTurn() {
+        testMail = null;
+        loadMail(null);
+        if (mode.getSelectedIndex() != 0) email.setText(DemoScenario.FOLLOW_UP);
+        setSummary("Tour suivant · conservez l’objet pour continuer le fil.", ACCENT);
+        previewTestHistory();
+        updateControls();
+        email.requestFocusInWindow();
+    }
+
+    private Path historyDirectory(boolean simulation) {
+        return workspace == null ? root.resolve("threads").resolve(simulation ? "simulation" : "ollama")
+                : workspace.runsDirectory().resolve("threads");
+    }
+
+    private static fr.mas.email.mail.ReceivedMail newTestMail(String subject, String body) {
+        String sender = "nina@example.test";
+        long uid = java.util.concurrent.ThreadLocalRandom.current().nextLong(1, Long.MAX_VALUE);
+        var summary = new fr.mas.email.mail.MailSummary(uid, 1, sender, subject, java.time.Instant.now());
+        return new fr.mas.email.mail.ReceivedMail("assistant@example.test", summary, sender, "", body);
+    }
+
+    private void previewTestHistory() {
+        String subject = testSubject.getText().strip();
+        var mail = subject.isEmpty() ? null : testMail != null && testMail.summary().subject().equals(subject)
+                ? testMail : newTestMail(subject, "");
+        showThreadHistory(mail, historyDirectory(mode.getSelectedIndex() != 0));
+    }
+
+    private void showThreadHistory(fr.mas.email.mail.ReceivedMail mail, Path directory) {
+        long revision = ++historyRevision;
         threadHistory.setText("");
         historyPane.setVisible(false);
         if (mail == null) return;
-        Path directory = workspace.runsDirectory().resolve("threads");
         new SwingWorker<fr.mas.email.world.ThreadHistoryDigest, Void>() {
             @Override protected fr.mas.email.world.ThreadHistoryDigest doInBackground() throws IOException {
                 var memory = new fr.mas.email.world.ConversationMemoryService(new fr.mas.email.world.FileWorldStore(directory, json));
@@ -428,7 +480,7 @@ final class TestBench extends JFrame {
             }
 
             @Override protected void done() {
-                if (loadedMail != mail) return;
+                if (historyRevision != revision) return;
                 try {
                     var turns = get().recentTurns();
                     if (turns.isEmpty()) return;
@@ -441,7 +493,8 @@ final class TestBench extends JFrame {
                         summary.append("Brouillon : ").append(turn.generatedDraftSubject()).append(" — ")
                                 .append(turn.generatedDraftSnippet()).append('\n');
                         if (turn.finalSentBodySnippet() != null) {
-                            summary.append("Réponse envoyée : ").append(turn.finalSentBodySnippet()).append('\n');
+                            summary.append(workspace == null ? "Réponse simulée : " : "Réponse envoyée : ")
+                                    .append(turn.finalSentBodySnippet()).append('\n');
                         }
                         summary.append('\n');
                     }
@@ -504,6 +557,35 @@ final class TestBench extends JFrame {
         execute(logPath.getParent(), null, null, instruction);
     }
 
+    private void simulateSend() {
+        if (workspace != null || busy || !review.approved() || pending != null || sendAttempted) return;
+        var draft = review.draft();
+        var directory = logPath.getParent();
+        busy = true;
+        updateControls();
+        new SwingWorker<Void, Void>() {
+            @Override protected Void doInBackground() throws IOException {
+                runner.simulateSend(draft, directory);
+                return null;
+            }
+
+            @Override protected void done() {
+                busy = false;
+                try {
+                    get();
+                    sendAttempted = true;
+                    setSummary("Envoi simulé enregistré. Cliquez sur Tour suivant pour continuer le fil.", ACCENT);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } catch (ExecutionException e) {
+                    setSummary("Impossible d’enregistrer l’envoi simulé.", ERROR);
+                } finally {
+                    updateControls();
+                }
+            }
+        }.execute();
+    }
+
     private void approve() {
         if (busy || !review.canApprove() || pending != null) return;
         var displayed = review.draft();
@@ -543,7 +625,8 @@ final class TestBench extends JFrame {
                 AgentResult<DraftResponse> result;
                 if (runEngine != 0) {
                     result = correction != null ? runner.correct(correction, DemoScenario.correction(json), directory, this::publish)
-                            : answer == null ? runner.run(message, DemoScenario.gateway(json, runEngine == 2),
+                            : answer == null ? runner.run(message, DemoScenario.benchGateway(json, runEngine == 2,
+                                    DemoScenario.FOLLOW_UP.equals(message)),
                             runEngine == 2 ? "Simulation clarification" : "Simulation INF312", directory, this::publish)
                             : runner.resume(answer, DemoScenario.resumed(json, answer.answer()), directory, this::publish);
                 } else {
@@ -731,10 +814,13 @@ final class TestBench extends JFrame {
         email.setEditable(workspace == null && !busy);
         example.setVisible(workspace == null);
         example.setEnabled(!busy);
+        nextTurn.setEnabled(!busy && pending == null && runMail != null);
+        testSubject.setEnabled(!busy && pending == null);
         run.setEnabled(!busy && (workspace == null || loadedMail != null && pending == null));
         if (mailbox != null) mailbox.controls(!busy && pending == null);
         editEmail.setEnabled(!busy && pending == null && loadedMail != null);
         send.setEnabled(!busy && review.approved() && pending == null && runMail != null && !sendAttempted);
+        simulateSend.setEnabled(workspace == null && !busy && review.approved() && pending == null && !sendAttempted);
         openLog.setEnabled(logPath != null && Files.isRegularFile(logPath));
         clarify.setEnabled(!busy && pending != null);
         correctionForm.setVisible(review.draft() != null);
