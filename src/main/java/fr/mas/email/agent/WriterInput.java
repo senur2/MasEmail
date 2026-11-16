@@ -12,7 +12,11 @@ import java.util.List;
  * The original email is available to injected behaviors. The built-in Writer uses the analysis.
  */
 public record WriterInput(EmailAnalysis analysis, List<Belief> beliefs, List<String> intentions, String originalEmail,
-                          Knowledge knowledge, CorrectionPlan correctionPlan) {
+                          Knowledge knowledge, CorrectionPlan correctionPlan, fr.mas.email.world.ThreadHistoryDigest threadHistory) {
+    public WriterInput(EmailAnalysis analysis, List<Belief> beliefs, List<String> intentions, String originalEmail,
+                       Knowledge knowledge, CorrectionPlan correctionPlan) {
+        this(analysis, beliefs, intentions, originalEmail, knowledge, correctionPlan, null);
+    }
     public WriterInput(EmailAnalysis analysis, List<Belief> beliefs, List<String> intentions, String originalEmail,
                        Knowledge knowledge) {
         this(analysis, beliefs, intentions, originalEmail, knowledge, null);
@@ -23,11 +27,15 @@ public record WriterInput(EmailAnalysis analysis, List<Belief> beliefs, List<Str
     }
 
     public WriterInput withKnowledge(Knowledge knowledge) {
-        return new WriterInput(analysis, beliefs, intentions, originalEmail, knowledge, correctionPlan);
+        return new WriterInput(analysis, beliefs, intentions, originalEmail, knowledge, correctionPlan, threadHistory);
     }
 
     public WriterInput withCorrection(CorrectionPlan correction) {
-        return new WriterInput(analysis, beliefs, intentions, originalEmail, knowledge, correction);
+        return new WriterInput(analysis, beliefs, intentions, originalEmail, knowledge, correction, threadHistory);
+    }
+
+    public WriterInput withThreadHistory(fr.mas.email.world.ThreadHistoryDigest history) {
+        return new WriterInput(analysis, beliefs, intentions, originalEmail, knowledge, correctionPlan, history);
     }
     public WriterInput(EmailAnalysis analysis) {
         this(analysis, List.of(), List.of());

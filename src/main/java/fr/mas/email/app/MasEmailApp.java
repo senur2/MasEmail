@@ -14,7 +14,7 @@ public final class MasEmailApp {
     public static void main(String[] args) {
         if (args.length == 1 && args[0].equals("--help")) {
             System.out.println("MAS Email — Java 21\n"
-                    + "Lancer le JAR pour ouvrir l’application Gmail et la configuration initiale.\n"
+                    + "Lancer le JAR pour choisir entre Gmail et le mode test sans compte.\n"
                     + "--test-bench : banc de test avec les données de démonstration.\n"
                     + "Paramètres JVM facultatifs : mas.userDirectory, mas.runsDirectory, ollama.url, ollama.model");
             return;
@@ -28,9 +28,10 @@ public final class MasEmailApp {
             try {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
                 var json = new JsonCodec();
-                if (bench) {
+                int choice = bench ? 1 : chooseMode();
+                if (choice == 1) {
                     new TestBench(json, directory, address, model).setVisible(true);
-                } else {
+                } else if (choice == 0) {
                     var workspace = new UserWorkspace(Path.of(System.getProperty("mas.userDirectory", "data/user")), json);
                     if (!workspace.configured() && !SetupDialog.show(null, workspace)) return;
                     workspace.knowledge(); // Validate the selected user data before opening a session.
@@ -42,5 +43,11 @@ public final class MasEmailApp {
                         "MAS Email", JOptionPane.ERROR_MESSAGE);
             }
         });
+    }
+
+    static int chooseMode() {
+        Object[] modes = {"Ouvrir Gmail", "Tester sans compte"};
+        return JOptionPane.showOptionDialog(null, "Comment voulez-vous utiliser MAS Email ?", "MAS Email",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, modes, modes[1]);
     }
 }

@@ -18,7 +18,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.Locale;
 
 /** Extracts cognitive content and enriches it with Java-owned identities. */
 public final class ParserAgent<I> extends ConfiguredAgent<I, EmailAnalysis> {
@@ -35,8 +36,14 @@ public final class ParserAgent<I> extends ConfiguredAgent<I, EmailAnalysis> {
         String prompt = loadPrompt();
         var json = new JsonCodec();
         return (input, context) -> {
-            String payload = input.correctionPlan() == null ? input.text()
-                    : json.write(Map.of("email", input.text(), "correctionPlan", input.correctionPlan()));
+            String payload = input.text();
+            if (input.correctionPlan() != null || input.threadHistory() != null) {
+                var structured = new LinkedHashMap<String, Object>();
+                structured.put("email", input.text());
+                if (input.correctionPlan() != null) structured.put("correctionPlan", input.correctionPlan());
+                if (input.threadHistory() != null) structured.put("threadHistory", input.threadHistory());
+                payload = json.write(structured);
+            }
             String instructions = input.correctionPlan() == null ? prompt
                     : prompt + "\nThis request is a correction. Read the original message from the top-level email field.";
             var request = new LlmRequest<>(instructions, payload, Contract.EMAIL_ANALYSIS_CONTENT, timeout);
@@ -45,8 +52,12 @@ public final class ParserAgent<I> extends ConfiguredAgent<I, EmailAnalysis> {
                 case Success<EmailAnalysis.Content> success -> {
                     try {
                         var content = success.value();
-                        Checks.rule(content.evidence().stream().allMatch(item -> input.text().contains(item.text())),
-                                "An evidence quote is absent from the source email");
+                        String normalizedSource = normalizeForEvidenceCheck(input.text());
+                        for (var evidence : content.evidence()) {
+                            String normalizedQuote = normalizeForEvidenceCheck(evidence.text());
+                            Checks.rule(!normalizedQuote.isEmpty() && normalizedSource.contains(normalizedQuote),
+                                    "An evidence quote is absent from the source email: " + evidence.text());
+                        }
                         yield new Success<>(content.enrich(input.emailId(), input.threadId()), success.rawOutput());
                     } catch (fr.mas.email.contract.InvalidOutputException e) {
                         yield Errors.validation(ErrorCode.INVALID_OUTPUT, "ParserAgent", context.task(), e, success.rawOutput());
@@ -59,6 +70,14 @@ public final class ParserAgent<I> extends ConfiguredAgent<I, EmailAnalysis> {
                         Errors.create(ErrorCode.INVALID_OUTPUT, "ParserAgent", context.task());
             };
         };
+    }
+
+    private static String normalizeForEvidenceCheck(String text) {
+        if (text == null) return "";
+        return text.replaceAll("[\"'«»“”‘’]", "'")
+                .replaceAll("(?U)\\s+", " ")
+                .trim()
+                .toLowerCase(Locale.ROOT);
     }
 
     private static String loadPrompt() {

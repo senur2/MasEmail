@@ -5,7 +5,12 @@ import fr.mas.email.contract.CorrectionPlan;
 import fr.mas.email.contract.DraftResponse;
 import fr.mas.email.contract.ResponsePlan;
 
-public record ScribeInput(ResponsePlan responsePlan, CorrectionPlan correctionPlan, DraftResponse previousDraft) {
+public record ScribeInput(ResponsePlan responsePlan, CorrectionPlan correctionPlan, DraftResponse previousDraft,
+                          @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                          fr.mas.email.world.ThreadHistoryDigest threadHistory) {
+    public ScribeInput(ResponsePlan responsePlan, CorrectionPlan correctionPlan, DraftResponse previousDraft) {
+        this(responsePlan, correctionPlan, previousDraft, null);
+    }
     public ScribeInput(ResponsePlan responsePlan) {
         this(responsePlan, null, null);
     }

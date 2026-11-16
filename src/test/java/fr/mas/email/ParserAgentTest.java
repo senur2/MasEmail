@@ -133,11 +133,22 @@ class ParserAgentTest {
     }
 
     @Test
-    void rejectsEvidenceThatIsNotAnExactSourceSubstring() {
+    void rejectsEvidenceThatIsNotInTheNormalizedSource() {
         var valid = json.write(TestData.analysisContent("fr", "REQUEST_ACTION", List.of()));
         gateway.enqueueJson(valid.replace("\"evidence\":[]",
                 "\"evidence\":[{\"field\":\"requestedActions\",\"text\":\"Peux-tu envoyer le dossier!\"}]"));
         assertError(ErrorCode.INVALID_OUTPUT, run(input));
+    }
+
+    @Test
+    void acceptsTypographicDifferencesWithoutChangingTheReturnedEvidence() {
+        String quote = "”PEUX-TU   M'ENVOYER le dossier ?“";
+        var valid = json.write(TestData.analysisContent("fr", "REQUEST_ACTION", List.of()));
+        var evidence = new EmailAnalysis.Evidence("requestedActions", quote);
+        gateway.enqueueJson(valid.replace("\"evidence\":[]", "\"evidence\":" + json.write(List.of(evidence))));
+        var source = new ParserInput("email-1", "thread-1", "Bonjour,\r\n«Peux-tu m’envoyer\r\n\tle dossier\u00a0?»");
+        var success = assertInstanceOf(Success.class, run(source));
+        assertEquals(List.of(evidence), ((EmailAnalysis) success.value()).evidence());
     }
 
     @Test

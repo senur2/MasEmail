@@ -43,7 +43,7 @@ public final class ScribeAgent extends ConfiguredAgent<ScribeInput, DraftRespons
         var json = new JsonCodec();
         return (input, context) -> {
             var plan = input.responsePlan();
-            var payload = input.correctionPlan() == null ? json.write(plan) : json.write(input);
+            var payload = input.correctionPlan() == null && input.threadHistory() == null ? json.write(plan) : json.write(input);
             var request = new LlmRequest<>(prompt, payload, Contract.DRAFT_CONTENT, timeout);
             return switch (context.llm().generate(request, context.task(), context.configuration().agentId())) {
                 case Success<DraftContent> success -> {

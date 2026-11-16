@@ -74,6 +74,8 @@ final class TestBench extends JFrame {
     private final JButton editEmail = button("Modifier l’email entrant", false);
     private boolean sendAttempted;
     private final JTextArea email = textArea(true);
+    private final JTextArea threadHistory = textArea(false);
+    private final JScrollPane historyPane = new JScrollPane(threadHistory);
     private final JTextArea draftBody = textArea(false);
     private final JTextField draftSubject = new JTextField();
     private final JTextArea feedback = textArea(true);
@@ -83,7 +85,9 @@ final class TestBench extends JFrame {
     private final JComboBox<String> mode = new JComboBox<>(
             new String[]{"Ollama local", "Simulation INF312", "Simulation clarification"});
     private final JTextField address;
-    private final JTextField model;
+    private final JComboBox<String> model = new JComboBox<>();
+    private final JButton refreshModels = button("Actualiser", false);
+    private boolean loadingModels;
     private final JButton example = button("Charger l’exemple", false);
     private final JButton run = button("Générer le brouillon", true);
     private final JButton openLog = button("Ouvrir le journal", false);
@@ -131,7 +135,13 @@ final class TestBench extends JFrame {
                     updateControls();
                 });
         address = new JTextField(server, 18);
-        model = new JTextField(modelTag, 20);
+        model.setEditable(true);
+        model.setSelectedItem(modelTag);
+        refreshModels.addActionListener(event -> refreshModels());
+        address.addActionListener(event -> refreshModels());
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override public void windowOpened(java.awt.event.WindowEvent event) { refreshModels(); }
+        });
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(900, 610));
         setSize(1120, 710);
@@ -165,6 +175,38 @@ final class TestBench extends JFrame {
         updateControls();
     }
 
+    private void refreshModels() {
+        String endpoint = address.getText().strip();
+        if (!refreshModels.isEnabled() || endpoint.isEmpty()) return;
+        loadingModels = true;
+        refreshModels.setToolTipText("Recherche des modèles installés…");
+        updateControls();
+        new SwingWorker<List<String>, Void>() {
+            @Override protected List<String> doInBackground() throws Exception {
+                return OllamaModelList.load(endpoint);
+            }
+
+            @Override protected void done() {
+                loadingModels = false;
+                updateControls();
+                if (!endpoint.equals(address.getText().strip())) return;
+                try {
+                    var models = get();
+                    Object selection = model.getEditor().getItem();
+                    model.setModel(new javax.swing.DefaultComboBoxModel<>(models.toArray(String[]::new)));
+                    if (models.contains(selection) || models.isEmpty() || busy || pending != null) {
+                        model.setSelectedItem(selection);
+                    }
+                    refreshModels.setToolTipText(models.isEmpty() ? "Aucun modèle installé" : "Actualiser les modèles installés");
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } catch (ExecutionException e) {
+                    refreshModels.setToolTipText("Liste indisponible. Vérifiez qu’Ollama fonctionne, puis actualisez.");
+                }
+            }
+        }.execute();
+    }
+
     private JPanel buildContent() {
         var content = new JPanel(new BorderLayout(0, 16));
         content.setBackground(BACKGROUND);
@@ -182,12 +224,15 @@ final class TestBench extends JFrame {
         var settings = new JPanel(new GridLayout(1, 3, 14, 0));
         settings.setOpaque(false);
         styleField(address);
-        styleField(model);
+        model.setFont(FONT);
         mode.setFont(FONT);
         mode.setBackground(SURFACE);
         settings.add(field("Moteur", mode));
         settings.add(field("Adresse Ollama", address));
-        settings.add(field("Modèle", model));
+        var modelSelector = new JPanel(new BorderLayout(6, 0));
+        modelSelector.add(model, BorderLayout.CENTER);
+        modelSelector.add(refreshModels, BorderLayout.EAST);
+        settings.add(field("Modèle", modelSelector));
         settings.setAlignmentX(LEFT_ALIGNMENT);
         header.add(settings);
         content.add(header, BorderLayout.NORTH);
@@ -198,7 +243,13 @@ final class TestBench extends JFrame {
         if (mailbox != null) {
             var mailInput = new JPanel(new BorderLayout(0, 8));
             mailInput.add(mailbox, BorderLayout.NORTH);
-            mailInput.add(scroll(email), BorderLayout.CENTER);
+            var message = new JPanel(new BorderLayout(0, 8));
+            threadHistory.setRows(5);
+            historyPane.setBorder(BorderFactory.createTitledBorder("Historique du fil"));
+            historyPane.setVisible(false);
+            message.add(historyPane, BorderLayout.NORTH);
+            message.add(scroll(email), BorderLayout.CENTER);
+            mailInput.add(message, BorderLayout.CENTER);
             input.add(mailInput, BorderLayout.CENTER);
         }
         var actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
@@ -284,7 +335,7 @@ final class TestBench extends JFrame {
             return;
         }
         String endpoint = address.getText().strip();
-        String modelTag = model.getText().strip();
+        String modelTag = java.util.Objects.toString(model.getEditor().getItem(), "").strip();
         if (!simulation && (endpoint.isEmpty() || modelTag.isEmpty())) {
             setSummary("Renseignez l’adresse Ollama et le nom du modèle.", ERROR);
             return;
@@ -304,7 +355,8 @@ final class TestBench extends JFrame {
         outputLayout.show(outputCards, "draft");
         runner = workspace == null
                 ? new PipelineRunner(json, root.resolveSibling(simulation ? "simulation-knowledge" : "knowledge"))
-                : new PipelineRunner(json, workspace.knowledgeDirectory(), false);
+                : new PipelineRunner(json, workspace.knowledgeDirectory(), false,
+                        workspace.runsDirectory().resolve("threads"), runMail);
         busy = true;
         stages.values().forEach(status -> {
             status.setText("En attente");
@@ -343,7 +395,7 @@ final class TestBench extends JFrame {
             var revised = new fr.mas.email.mail.MailSummary(summary.uid(), summary.uidValidity(), summary.from(),
                     subject.getText(), summary.receivedAt());
             loadMail(new fr.mas.email.mail.ReceivedMail(original.accountEmail(), revised, original.replyTo(),
-                    original.messageId(), body.getText()));
+                    original.messageId(), body.getText(), original.threadId()));
             setSummary("Email modifié localement. Générez puis validez un nouveau brouillon.", ACCENT);
             updateControls();
             return;
@@ -356,11 +408,55 @@ final class TestBench extends JFrame {
         review = new PipelineRunner.DraftReview(null, false, false, false);
         runner = null; pending = null; logPath = null; sendAttempted = false;
         email.setText(message == null ? "" : message.parserText()); email.setCaretPosition(0);
+        showThreadHistory(message);
         draftSubject.setText(""); draftBody.setText(""); feedback.setText("");
         logLocation.setText("Aucun journal pour cet email");
         outputLayout.show(outputCards, "draft");
         stages.values().forEach(status -> { status.setText("En attente"); status.setForeground(MUTED); });
         setSummary(message == null ? "Compte changé. Connectez Gmail et ouvrez un email." : "Email chargé. Vous pouvez générer le brouillon.", ACCENT);
+    }
+
+    private void showThreadHistory(fr.mas.email.mail.ReceivedMail mail) {
+        threadHistory.setText("");
+        historyPane.setVisible(false);
+        if (mail == null) return;
+        Path directory = workspace.runsDirectory().resolve("threads");
+        new SwingWorker<fr.mas.email.world.ThreadHistoryDigest, Void>() {
+            @Override protected fr.mas.email.world.ThreadHistoryDigest doInBackground() throws IOException {
+                var memory = new fr.mas.email.world.ConversationMemoryService(new fr.mas.email.world.FileWorldStore(directory, json));
+                return memory.loadDigest(memory.resolveThreadId(mail), mail.emailId());
+            }
+
+            @Override protected void done() {
+                if (loadedMail != mail) return;
+                try {
+                    var turns = get().recentTurns();
+                    if (turns.isEmpty()) return;
+                    var summary = new StringBuilder();
+                    for (var turn : turns) {
+                        summary.append("Tour ").append(turn.turnIndex()).append(" · ").append(turn.receivedAt()).append('\n');
+                        if (!turn.requestedInformation().isEmpty()) {
+                            summary.append("Questions : ").append(String.join(", ", turn.requestedInformation())).append('\n');
+                        }
+                        summary.append("Brouillon : ").append(turn.generatedDraftSubject()).append(" — ")
+                                .append(turn.generatedDraftSnippet()).append('\n');
+                        if (turn.finalSentBodySnippet() != null) {
+                            summary.append("Réponse envoyée : ").append(turn.finalSentBodySnippet()).append('\n');
+                        }
+                        summary.append('\n');
+                    }
+                    threadHistory.setText(summary.toString());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                } catch (ExecutionException e) {
+                    threadHistory.setText("Impossible de charger l’historique de ce fil.");
+                }
+                threadHistory.setCaretPosition(0);
+                historyPane.setVisible(true);
+                historyPane.getParent().revalidate();
+            }
+        }.execute();
     }
 
     private void send() {
@@ -631,6 +727,7 @@ final class TestBench extends JFrame {
         mode.setEnabled(workspace == null && !busy && pending == null);
         address.setEnabled(!busy && ollama && pending == null);
         model.setEnabled(!busy && ollama && pending == null);
+        refreshModels.setEnabled(!busy && ollama && pending == null && !loadingModels);
         email.setEditable(workspace == null && !busy);
         example.setVisible(workspace == null);
         example.setEnabled(!busy);

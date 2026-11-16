@@ -38,6 +38,9 @@ import fr.mas.email.result.ErrorPlan;
 import fr.mas.email.result.Success;
 import fr.mas.email.result.TaskContext;
 import fr.mas.email.world.FileWorldStore;
+import fr.mas.email.world.ConversationMemoryService;
+import fr.mas.email.world.ThreadHistoryDigest;
+import fr.mas.email.mail.ReceivedMail;
 import fr.mas.email.world.MiniWorldService;
 
 import java.io.BufferedWriter;
@@ -76,6 +79,9 @@ final class PipelineRunner {
     private final boolean packagedDefaults;
     private final Map<String, Map<String, String>> sessionKnowledge = new HashMap<>();
     private Path sessionDirectory;
+    private final Path threadDirectory;
+    private final ReceivedMail incomingMail;
+    private ThreadHistoryDigest threadHistory;
 
     PipelineRunner(JsonCodec json) {
         this(json, null);
@@ -86,9 +92,23 @@ final class PipelineRunner {
     }
 
     PipelineRunner(JsonCodec json, Path knowledgeDirectory, boolean packagedDefaults) {
+        this(json, knowledgeDirectory, packagedDefaults, null, null);
+    }
+
+    PipelineRunner(JsonCodec json, Path knowledgeDirectory, boolean packagedDefaults, Path threadDirectory, ReceivedMail incomingMail) {
         this.json = json;
         this.knowledgeDirectory = knowledgeDirectory;
         this.packagedDefaults = packagedDefaults;
+        this.threadDirectory = threadDirectory;
+        this.incomingMail = incomingMail;
+    }
+
+    private ConversationMemoryService conversations() throws IOException {
+        return new ConversationMemoryService(new FileWorldStore(threadDirectory, json));
+    }
+
+    private ThreadHistoryDigest previousTurns() {
+        return threadHistory == null || threadHistory.recentTurns().isEmpty() ? null : threadHistory;
     }
 
     private AgentFactory factory(LlmGateway gateway, FileWorldStore worlds) {
@@ -113,6 +133,10 @@ final class PipelineRunner {
             var factory = factory(gateway, worlds);
             var mediator = mediator(worlds, workflow(gateway, worlds, log));
             try {
+                if (incomingMail != null) {
+                    var memory = conversations();
+                    threadHistory = memory.loadDigest(memory.resolveThreadId(incomingMail), incomingMail.emailId());
+                }
                 mediator.startExecution(correlationId, email);
                 return resolveAgentCorrections(execute(email, null, factory, mediator, log), mediator, log);
             } catch (RuntimeException e) {
@@ -159,14 +183,22 @@ final class PipelineRunner {
         try (var output = Files.newBufferedWriter(directory.resolve(LOG_NAME), UTF_8, APPEND)) {
             output.write("\n=== OrchestratorAgent / ENVOI VALIDÉ PAR L’UTILISATEUR ===\n");
             output.flush();
+            fr.mas.email.mail.MailDelivery delivery;
             try {
-                var delivery = mediator(worlds).sendApprovedReply(account, original, draft, credential, mail, worlds.mailDelivery());
-                output.write(json.writePretty(delivery) + "\n");
-                return delivery;
+                delivery = mediator(worlds).sendApprovedReply(account, original, draft, credential, mail, worlds.mailDelivery());
             } catch (IOException | RuntimeException e) {
                 output.write("Envoi arrêté ; consulter mail-delivery.json et vérifier Gmail.\n");
                 throw e;
             }
+            output.write(json.writePretty(delivery) + "\n");
+            if (threadHistory != null) {
+                try {
+                    conversations().recordApprovedReply(threadHistory.threadId(), draft.emailId(), draft.body());
+                } catch (IOException | RuntimeException e) {
+                    output.write("Envoi confirmé, mais mise à jour de l’historique impossible.\n");
+                }
+            }
+            return delivery;
         }
     }
 
@@ -276,10 +308,16 @@ final class PipelineRunner {
 
     private AgentResult<DraftResponse> execute(String email, CorrectionPlan correction, AgentFactory factory, OrchestratorAgent mediator,
                                                RunLog log) throws IOException {
-        String emailId = "email-" + log.correlationId;
+        String emailId = incomingMail == null ? "email-" + log.correlationId : incomingMail.emailId();
+        String threadId = threadHistory == null ? "thread-" + log.correlationId : threadHistory.threadId();
+        String current = incomingMail == null ? ReceivedMail.stripQuotes(email) : incomingMail.cleanedParserText();
+        if (current.isBlank()) {
+            return fr.mas.email.result.Errors.create(fr.mas.email.result.ErrorCode.EMPTY_RESULT, "ParserAgent",
+                    new TaskContext(log.correlationId, UUID.randomUUID(), UUID.randomUUID()));
+        }
         var parser = factory.createParser(config("ParserAgent", AgentRole.PARSER, "Extraction du message"));
         var parsed = log.step(parser.id(), Contract.EMAIL_ANALYSIS, mediator,
-                task -> mediator.execute(parser, new ParserInput(emailId, "thread-" + log.correlationId, email, correction),
+                task -> mediator.execute(parser, new ParserInput(emailId, threadId, current, correction, previousTurns()),
                         task, Contract.EMAIL_ANALYSIS, value -> Checks.rule(emailId.equals(value.emailId()))));
         if (!(parsed instanceof Success(var analysisMessage, var rawIgnored0))) return stopped(parsed);
 
@@ -290,7 +328,7 @@ final class PipelineRunner {
             CorrectionPlan correction, AgentFactory factory, OrchestratorAgent mediator, RunLog log) throws IOException {
         var decision = factory.createDecision(config("DecisionAgent", AgentRole.DECISION, "Routage"));
         var candidates = DecisionInput.forAuthorizedWriters(analysis, AUTHORIZED_WRITERS).availableWriters();
-        var decisionInput = new DecisionInput(analysis, candidates, hint, correction);
+        var decisionInput = new DecisionInput(analysis, candidates, hint, correction, previousTurns());
         var routed = log.step(decision.id(), Contract.ROUTE_DECISION, mediator, attempt,
                 task -> mediator.execute(decision, decisionInput, task, Contract.ROUTE_DECISION,
                         new RouteDecisionValidator(analysis.emailId(), candidates)));
@@ -306,7 +344,7 @@ final class PipelineRunner {
         var knowledge = mediator.writerKnowledge(writer.id());
         var sessionValues = sessionKnowledge.get(writer.id());
         if (sessionValues != null) knowledge = knowledge.withSession(sessionValues);
-        var input = new WriterInput(analysis).withKnowledge(knowledge).withCorrection(correction);
+        var input = new WriterInput(analysis).withKnowledge(knowledge).withCorrection(correction).withThreadHistory(previousTurns());
         // The built-in Writer checks references against its scoped MiniWorld. Semantic review
         // remains manual in the test bench.
         var planValidator = new ResponsePlanValidator(fact -> hasDeclaredOrigin(fact.sourceRef(), analysis));
@@ -320,10 +358,20 @@ final class PipelineRunner {
     private AgentResult<DraftResponse> scribe(ScribeInput input, AgentFactory factory,
                                               OrchestratorAgent mediator, RunLog log) throws IOException {
         var scribe = factory.createScribe(config("ScribeAgent", AgentRole.SCRIBE, "Rédaction du brouillon"));
-        return log.step(scribe.id(), Contract.DRAFT_RESPONSE, mediator,
-                task -> mediator.execute(scribe, input, task, Contract.DRAFT_RESPONSE,
+        var withHistory = new ScribeInput(input.responsePlan(), input.correctionPlan(), input.previousDraft(), previousTurns());
+        var result = log.step(scribe.id(), Contract.DRAFT_RESPONSE, mediator,
+                task -> mediator.execute(scribe, withHistory, task, Contract.DRAFT_RESPONSE,
                         draft -> DraftResponseValidator.validateStructure(input.responsePlan(), draft)))
                 .map(AgentMessage::payload);
+        if (threadHistory != null && result instanceof Success<?>) {
+            try {
+                var trace = new FileWorldStore(sessionDirectory, json).executionTrace().load().orElseThrow();
+                conversations().recordDraftTurn(threadHistory.threadId(), incomingMail, trace);
+            } catch (IOException | RuntimeException e) {
+                log.write("Historique du fil indisponible : brouillon conservé dans cette exécution.\n");
+            }
+        }
+        return result;
     }
 
     private static AgentConfig config(String id, AgentRole role, String specialization) {

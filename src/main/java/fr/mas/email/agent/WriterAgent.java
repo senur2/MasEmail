@@ -67,6 +67,7 @@ public final class WriterAgent extends ConfiguredAgent<WriterInput, ResponsePlan
             payload.put("emailAnalysis", input.analysis());
             payload.put("writerProfile", profile);
             payload.put("miniWorlds", knowledge);
+            if (input.threadHistory() != null) payload.put("threadHistory", input.threadHistory());
             if (input.correctionPlan() != null) payload.put("correctionPlan", input.correctionPlan());
             var request = new LlmRequest<>(prompt, json.write(payload), Contract.RESPONSE_PLAN_CONTENT, timeout);
             return switch (context.llm().generate(request, context.task(), agentId)) {

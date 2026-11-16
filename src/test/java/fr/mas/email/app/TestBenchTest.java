@@ -27,6 +27,9 @@ class TestBenchTest {
         var approvalButton = edt(() -> button(window, "Valider le brouillon"));
         try {
             edt(() -> {
+                assertTrue(descendants(window).filter(JTextArea.class::isInstance).map(JTextArea.class::cast)
+                        .anyMatch(field -> field.isEditable() && field.getText().equals(DemoScenario.EMAIL)));
+                assertTrue(descendants(window).noneMatch(MailboxPanel.class::isInstance));
                 descendants(window).filter(JComboBox.class::isInstance).map(JComboBox.class::cast)
                         .findFirst().orElseThrow().setSelectedIndex(1);
                 assertFalse(button(window, "Valider le brouillon").isEnabled());

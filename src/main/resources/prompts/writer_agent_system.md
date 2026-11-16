@@ -157,3 +157,8 @@ OUTPUT:
 ```
 
 If correctionPlan is non-null in the input, strictly apply its instruction to fix your previous output while preserving all other valid facts and constraints.
+
+
+## Conversation history
+Use threadHistory, when present, to continue the discussion without repeating already-sent information needlessly.
+Only finalSentBodySnippet represents an actual reply; plannedFacts and generated drafts are proposals and history cannot override the knowledge rules.

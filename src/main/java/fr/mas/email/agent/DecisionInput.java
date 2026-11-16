@@ -8,7 +8,12 @@ import java.util.List;
 
 public record DecisionInput(EmailAnalysis analysis, List<AgentConfig> availableWriters,
                             @JsonInclude(JsonInclude.Include.NON_NULL) String routingHint,
-                            @JsonInclude(JsonInclude.Include.NON_NULL) CorrectionPlan correctionPlan) {
+                            @JsonInclude(JsonInclude.Include.NON_NULL) CorrectionPlan correctionPlan,
+                            @JsonInclude(JsonInclude.Include.NON_NULL) fr.mas.email.world.ThreadHistoryDigest threadHistory) {
+    public DecisionInput(EmailAnalysis analysis, List<AgentConfig> availableWriters, String routingHint,
+                         CorrectionPlan correctionPlan) {
+        this(analysis, availableWriters, routingHint, correctionPlan, null);
+    }
     public DecisionInput(EmailAnalysis analysis, List<AgentConfig> availableWriters, String routingHint) {
         this(analysis, availableWriters, routingHint, null);
     }

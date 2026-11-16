@@ -32,6 +32,19 @@ public final class FileWorldStore {
                 json, true, trace -> Checks.required(trace, "trace"));
     }
 
+    WorldRepository<ConversationThread> conversation(String threadId) {
+        String filename;
+        try {
+            var digest = java.security.MessageDigest.getInstance("SHA-256");
+            filename = HexFormat.of().formatHex(digest.digest(threadId.getBytes(StandardCharsets.UTF_8))) + ".json";
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
+        return new FileWorldRepository<>(root.resolve(filename), ConversationThread.class, json, true, thread -> {
+            if (!threadId.equals(thread.threadId())) throw new SecurityException("Conversation identifier mismatch");
+        });
+    }
+
     public WorldRepository<DraftApproval> draftApproval() {
         return new FileWorldRepository<>(root.resolve("draft-approval.json"), DraftApproval.class,
                 json, true, approval -> Checks.required(approval, "approval"));

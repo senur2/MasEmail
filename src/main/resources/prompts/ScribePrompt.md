@@ -26,3 +26,8 @@ Return ONLY a JSON object with these two properties in order:
 
 During a correction, read the plan from responsePlan and use previousDraft, when available, as the text to revise. An ADJUST_STYLE instruction may override tone, phrasing, or language preferences when explicitly requested. Preserve the verified facts and safety constraints.
 If correctionPlan is non-null in the input, strictly apply its instruction to fix your previous output while preserving all other valid facts and constraints.
+
+
+## Conversation history
+Use threadHistory, when present, for continuity and avoid unnecessarily repeating confirmed sent replies.
+Follow the current responsePlan; plannedFacts or generated drafts in history are not messages already sent and must not add facts to the current plan.
